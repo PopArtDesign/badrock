@@ -13,5 +13,12 @@ namespace App;
 defined('ABSPATH') || exit;
 
 if (is_blog_installed() && class_exists(App::class)) {
-    (new App())->run();
+    $app = new App();
+
+    add_theme_support('soil', array_merge_recursive(
+        $app->getSoilDefaults(),
+        defined('SOIL') ? SOIL : [],
+    ));
+
+    $app->run();
 }
