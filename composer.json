@@ -1,5 +1,5 @@
 {
-  "name": "popartdesign/bedrock",
+  "name": "popartdesign/badrock",
   "type": "project",
   "license": "MIT",
   "description": "WordPress boilerplate with Composer, easier configuration, and an improved folder structure",
@@ -14,6 +14,11 @@
       "name": "Ben Word",
       "email": "ben@benword.com",
       "homepage": "https://github.com/retlehs"
+    },
+    {
+      "name": "Oleg Voronkovich",
+      "email": "oleg-voronkovich@yandex.ru",
+      "homepage": "https://github.com/voronkovich"
     }
   ],
   "keywords": [
