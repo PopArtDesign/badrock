@@ -1,16 +1,16 @@
 # Application
-web/app/plugins/*
-!web/app/plugins/.gitkeep
-web/app/mu-plugins/*/
-web/app/themes/twentytwentythree/
-web/app/upgrade
-web/app/uploads/*
-!web/app/uploads/.gitkeep
-web/app/cache/*
+public/plugins/*
+!public/plugins/.gitkeep
+public/mu-plugins/*/
+public/themes/twentytwentythree/
+public/upgrade
+public/uploads/*
+!public/uploads/.gitkeep
+public/cache/*
 
 # WordPress
-web/wp
-web/.htaccess
+public/wp
+public/.htaccess
 
 # Logs
 *.log
