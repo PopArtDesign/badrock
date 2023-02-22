@@ -10,18 +10,4 @@ class App
     {
         // Place your code here
     }
-
-    public function getSoilDefaults(): array
-    {
-        return [
-            'clean-up',
-            'disable-rest-api',
-            'disable-asset-versioning',
-            'disable-trackbacks',
-            'js-to-footer',
-            'nav-walker',
-            'nice-search',
-            'relative-urls',
-        ];
-    }
 }

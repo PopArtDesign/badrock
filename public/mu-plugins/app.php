@@ -15,15 +15,12 @@ defined('ABSPATH') || exit;
 if (is_blog_installed() && class_exists(App::class)) {
     $app = new App();
 
-    add_theme_support('soil', array_merge_recursive(
-        $app->getSoilDefaults(),
-        defined('SOIL') ? SOIL : [],
-    ));
+    add_action('after_setup_theme', function () {
+        add_theme_support('soil', include $GLOBALS['root_dir'] . '/config/soil.php');
+    });
 
     add_filter('sober/intervention/return', function ($path) {
-        global $root_dir;
-
-        return $root_dir . '/config/intervention.php';
+        return $GLOBALS['root_dir'] . '/config/intervention.php';
     });
 
     $app->run();
