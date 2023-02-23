@@ -48,7 +48,8 @@ HELP
 badrock_init() {
   badrock_ddev_config "$@" \
     && ddev composer create -y 'popartdesign/badrock:@dev' \
-    && badrock_install_wordpress \
+    && badrock_wordpress_install \
+    && badrock_wordpress_config \
     && badrock_install_extra_packages \
     && ddev launch 2>/dev/null
 }
@@ -61,14 +62,21 @@ badrock_ddev_config() {
     --create-docroot
 }
 
-badrock_install_wordpress() {
+badrock_wordpress_install() {
   ddev exec wp-cli core install \
     --url='"${DDEV_PRIMARY_URL}"' \
     --title='"${DDEV_PROJECT}"' \
     --admin_user="${BADROCK_ADMIN_USER:-admin}" \
     --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
-    --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}" \
-    && ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}"
+    --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
+}
+
+badrock_wordpress_config() {
+  ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
+
+  if [[ -n "${BADROCK_LANGUAGE}" ]]; then
+    ddev wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
+  fi
 }
 
 badrock_install_extra_packages() {
