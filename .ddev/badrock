@@ -44,4 +44,4 @@ ddev config "$@" \
   --admin_password='admin' \
   --admin_email='"admin@${DDEV_HOSTNAME}"' \
   && ddev wp rewrite structure '/%category%/%postname%/' \
-  && ddev launch
+  && ddev launch 2>/dev/null
