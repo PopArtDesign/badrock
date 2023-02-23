@@ -2,7 +2,6 @@
 
 return [
     'clean-up',
-    'disable-rest-api',
     'disable-asset-versioning',
     'disable-trackbacks',
     'js-to-footer',
