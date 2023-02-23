@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+which 'ddev' >/dev/null || {
+  echo 'DDEV is not installed: https://ddev.com/get-started/'
+  exit 1
+} >&2
+
+if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+  cat <<HELP
+Badrock DDEV wrapper: https://github.com/PopArtDesign/badrock
+
+Usage: ${0##*/} [flags]
+
+Example:
+
+    ${0##*/} --php-version=8.1
+
+Flags:
+
+HELP
+
+  ddev config --help | sed \
+    -e '1,/Flags/d' \
+    -e '/Global Flags/,$d' \
+    -e 's/^[[:space:]]\+/    /'
+
+  exit
+fi
+
+if [[ -f "${PWD}/.ddev/config.yaml" ]]; then
+  exec ddev config "$@"
+fi
+
+ddev config "$@" \
+  --project-type='wordpress' \
+  --disable-settings-management \
+  --docroot='public' \
+  --create-docroot \
+  && ddev composer create -y 'popartdesign/badrock:@dev' \
+  && ddev exec wp-cli core install \
+  --url='"${DDEV_PRIMARY_URL}"' \
+  --title='"${DDEV_PROJECT}"' \
+  --admin_user='admin' \
+  --admin_password='admin' \
+  --admin_email='"admin@${DDEV_HOSTNAME}"' \
+  && ddev wp rewrite structure '/%category%/%postname%/' \
+  && ddev launch
