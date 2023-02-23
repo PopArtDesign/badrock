@@ -2,6 +2,7 @@
 
 return [
     'application.permalinks' => [
-        'structure' => '/%year%/%monthnum%/%day%/%postname%/',
+        // https://yoast.com/wordpress-seo-url-permalink/
+        'structure' => '/%category%/%postname%/',
     ],
 ];
