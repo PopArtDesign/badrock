@@ -50,7 +50,6 @@
     "voronkovich/wordpress-mailer-dsn": "^0.0.4"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.7.1",
     "roave/security-advisories": "dev-latest",
     "johnbillion/query-monitor": "^3.11",
     "symfony/var-dumper": "^6.0"
@@ -90,5 +89,8 @@
       "public/themes/{$name}/": ["type:wordpress-theme"]
     },
     "wordpress-install-dir": "public/wp"
+  },
+  "scripts": {
+    "lint": "tools/phpcs"
   }
 }

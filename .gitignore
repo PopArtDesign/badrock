@@ -25,3 +25,6 @@ public/.htaccess
 
 # WP-CLI
 wp-cli.local.yml
+
+# Phive
+/tools
