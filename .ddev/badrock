@@ -47,7 +47,7 @@ HELP
 
 badrock_init() {
   badrock_ddev_config "$@" \
-    && ddev composer create -y 'popartdesign/badrock:@dev' \
+    && ddev composer create -y 'popartdesign/badrock:dev-wpstarter' \
     && badrock_wordpress_install \
     && badrock_wordpress_config \
     && badrock_install_extra_packages \
