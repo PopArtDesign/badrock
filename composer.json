@@ -90,13 +90,5 @@
       "public/themes/{$name}/": ["type:wordpress-theme"]
     },
     "wordpress-install-dir": "public/wp"
-  },
-  "scripts": {
-    "post-root-package-install": [
-      "php -r \"copy('.env.example', '.env');\""
-    ],
-    "test": [
-      "phpcs"
-    ]
   }
 }
