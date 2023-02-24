@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: App
  * Plugin URI:  https://github.com/PopArtDesign/badrock
@@ -15,8 +16,10 @@ defined('ABSPATH') || exit;
 if (is_blog_installed() && class_exists(App::class)) {
     $app = new App();
 
-    add_action('after_setup_theme', function () {
-        add_theme_support('soil', include $GLOBALS['root_dir'] . '/config/soil.php');
+    $config = include WPSTARTER_PATH . '/config.php';
+
+    add_action('after_setup_theme', function () use ($config) {
+        add_theme_support('soil', $config['soil']);
     });
 
     $app->run();
