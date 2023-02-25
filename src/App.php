@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
-class App extends BaseApp
+class App
 {
     public function run(): void
     {
-        // Place your code here
+        // Put your code here
     }
 }

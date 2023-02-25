@@ -17,74 +17,26 @@ use Monolog\Logger;
 
 defined('ABSPATH') || exit;
 
-if (is_blog_installed() && class_exists(App::class)) {
-    $app = new App(WP_ENV, $root_dir);
-
-    $app->init();
-
-    $app->run();
+if (!is_blog_installed()) {
+    return;
 }
 
-class BaseApp
-{
-    private $env;
-    private $rootDir;
-    private $config;
+if (defined('SOIL')) {
+    add_action('after_setup_theme', function () {
+        add_theme_support('soil', SOIL);
+    });
+}
 
-    public function __construct(string $env, string $rootDir)
-    {
-        $this->env = $env;
-        $this->rootDir = $rootDir;
+if (defined('LOG_STREAM')) {
+    $logHandler = new StreamHandler(LOG_STREAM, Logger::DEBUG);
+    if (WP_ENV === 'production') {
+        $logHadler = new FingersCrossedHandler($logHandler, Logger::ERROR);
     }
 
-    public function getEnv(): string
-    {
-        return $this->env;
-    }
+    Wonolog\bootstrap($logHandler);
+    unset($logHandler);
+}
 
-    public function isEnv($env): bool
-    {
-        return $this->env === $env;
-    }
-
-    public function getRootDir(): string
-    {
-        return $this->rootDir;
-    }
-
-    public function getConfig(string $key = null)
-    {
-        if (null === $this->config) {
-            $file = $this->rootDir . '/config/config.php';
-
-            $this->config = file_exists($file) ? include($file) : [];
-        }
-
-        return $key ? ($this->config[$key] ?? null) : $this->config;
-    }
-
-    public function init(): void
-    {
-        add_action('after_setup_theme', function () {
-            $soilConfig = $this->getConfig('soil');
-            add_theme_support('soil', $soilConfig);
-        });
-
-        define('WP_UNHOOKED_CONFIG', $this->getConfig('unhooked'));
-
-        $wonologConfig = $this->getConfig('wonolog');
-
-        if ($wonologConfig['stream'] ?? false) {
-            $logStream = $wonologConfig['stream'];
-        } else {
-            $logStream = sprintf('%s/var/log/%s.log', $this->getRootDir(), $this->getEnv());
-        }
-
-        $logHandler = new StreamHandler($logStream, Logger::DEBUG);
-        if ($this->isEnv('production')) {
-            $logHadler = new FingersCrossedHandler($logHandler, Logger::ERROR);
-        }
-
-        Wonolog\bootstrap($logHandler);
-    }
+if (class_exists(App::class)) {
+    (new App())->run();
 }

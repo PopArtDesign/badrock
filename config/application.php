@@ -131,6 +131,27 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
     $_SERVER['HTTPS'] = 'on';
 }
 
+// https://github.com/roots/soil#modules
+Config::define('SOIL', [
+    'clean-up',
+    'disable-asset-versioning',
+    'disable-trackbacks',
+    'js-to-footer',
+    'nav-walker',
+    'nice-search',
+    'relative-urls',
+]);
+
+// https://github.com/globalis-ms/wp-unhooked
+Config::define('WP_UNHOOKED_CONFIG', [
+    'disable-comments' => true,
+    'disable-admin-dashboard-welcome-panel' => true,
+    'disable-admin-dashboard-widget-primary' => true,
+]);
+
+// It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
+Config::define('LOG_STREAM', sprintf('%s/var/log/%s.log', $root_dir, WP_ENV));
+
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 
 if (file_exists($env_config)) {
