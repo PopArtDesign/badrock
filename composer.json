@@ -47,7 +47,8 @@
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentythree": "^1.0",
     "roots/soil": "^4.1",
-    "voronkovich/wordpress-mailer-dsn": "^0.0.4"
+    "voronkovich/wordpress-mailer-dsn": "^0.0.4",
+    "inpsyde/wonolog": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

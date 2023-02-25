@@ -10,14 +10,63 @@
 
 namespace App;
 
+use Inpsyde\Wonolog;
+
 defined('ABSPATH') || exit;
 
 if (is_blog_installed() && class_exists(App::class)) {
-    $app = new App();
+    $app = new App(WP_ENV, $root_dir);
 
-    add_action('after_setup_theme', function () {
-        add_theme_support('soil', include $GLOBALS['root_dir'] . '/config/soil.php');
-    });
+    $app->init();
 
     $app->run();
+}
+
+class BaseApp
+{
+    private $env;
+    private $rootDir;
+    private $config;
+
+    public function __construct(string $env, string $rootDir)
+    {
+        $this->env = $env;
+        $this->rootDir = $rootDir;
+    }
+
+    public function getEnv(): string
+    {
+        return $this->env;
+    }
+
+    public function isEnv($env): bool
+    {
+    }
+
+    public function getRootDir(): string
+    {
+        return $this->rootDir;
+    }
+
+    public function getConfig(string $key = null)
+    {
+        if (null === $this->config) {
+            $file = $this->rootDir . '/config/config.php';
+
+            $this->config = file_exists($file) ? include($file) : [];
+        }
+
+        return $key ? ($this->config[$key] ?? null) : $this->config;
+    }
+
+    public function init(): void
+    {
+        $soilConfig = $this->getConfig('soil');
+        add_action('after_setup_theme', function () {
+            add_theme_support('soil', $soilConfig);
+        });
+
+        $wonologConfig = $this->getConfig('wonolog');
+        Wonolog\bootstrap($wonologConfig['handler'] ?? null);
+    }
 }
