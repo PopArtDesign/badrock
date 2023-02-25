@@ -11,6 +11,9 @@
 namespace App;
 
 use Inpsyde\Wonolog;
+use Monolog\Handler\FingersCrossedHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 defined('ABSPATH') || exit;
 
@@ -41,6 +44,7 @@ class BaseApp
 
     public function isEnv($env): bool
     {
+        return $this->env === $env;
     }
 
     public function getRootDir(): string
@@ -66,7 +70,21 @@ class BaseApp
             add_theme_support('soil', $soilConfig);
         });
 
+        define('WP_UNHOOKED_CONFIG', $this->getConfig('unhooked'));
+
         $wonologConfig = $this->getConfig('wonolog');
-        Wonolog\bootstrap($wonologConfig['handler'] ?? null);
+
+        if ($wonologConfig['stream'] ?? false) {
+            $logStream = $wonologConfig['stream'];
+        } else {
+            $logStream = sprintf('%s/var/log/%s.log', $this->getRootDir(), $this->getEnv());
+        }
+
+        $logHandler = new StreamHandler($logStream, Logger::DEBUG);
+        if ($this->isEnv('production')) {
+            $logHadler = new FingersCrossedHandler($logHandler, Logger::ERROR);
+        }
+
+        Wonolog\bootstrap($logHandler);
     }
 }

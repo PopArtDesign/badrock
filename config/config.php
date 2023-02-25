@@ -1,7 +1,5 @@
 <?php
 
-use Monolog\Handler\StreamHandler;
-
 return [
     'soil' => [
         'clean-up',
@@ -12,9 +10,7 @@ return [
         'nice-search',
         'relative-urls',
     ],
-    'wonolog' => [
-        'handler' => new StreamHandler(
-            \sprintf('%s/var/log/%s.log', $this->getRootDir(), $this->getEnv()),
-        )
+    'unhooked' => [
+        'disable-comments' => true,
     ],
 ];
