@@ -61,8 +61,8 @@ class BaseApp
 
     public function init(): void
     {
-        $soilConfig = $this->getConfig('soil');
         add_action('after_setup_theme', function () {
+            $soilConfig = $this->getConfig('soil');
             add_theme_support('soil', $soilConfig);
         });
 
