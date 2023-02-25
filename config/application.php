@@ -150,7 +150,7 @@ Config::define('WP_UNHOOKED_CONFIG', [
 ]);
 
 // It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
-Config::define('LOG_STREAM', sprintf('%s/var/log/%s.log', $root_dir, WP_ENV));
+Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/var/log/%s.log', $root_dir, WP_ENV));
 
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 

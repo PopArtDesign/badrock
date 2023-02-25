@@ -4,5 +4,6 @@
  */
 
 use Roots\WPConfig\Config;
+use function Env\env;
 
-Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? 5);
+Config::define('LOG_STREAM', 'php://stderr');
