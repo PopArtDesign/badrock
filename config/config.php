@@ -12,5 +12,7 @@ return [
     ],
     'unhooked' => [
         'disable-comments' => true,
+        'disable-admin-dashboard-welcome-panel' => true,
+        'disable-admin-dashboard-widget-primary' => true,
     ],
 ];
