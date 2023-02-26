@@ -2,8 +2,8 @@
   "name": "popartdesign/badrock",
   "type": "project",
   "license": "MIT",
-  "description": "WordPress boilerplate with Composer, easier configuration, and an improved folder structure",
-  "homepage": "https://roots.io/bedrock/",
+  "description": "WordPress boilerplate",
+  "homepage": "https://github.com/PopArtDesign/badrock",
   "authors": [
     {
       "name": "Scott Walkinshaw",
@@ -25,16 +25,8 @@
     "bedrock", "composer", "roots", "wordpress", "wp", "wp-config"
   ],
   "support": {
-    "issues": "https://github.com/roots/bedrock/issues",
-    "forum": "https://discourse.roots.io/category/bedrock"
+    "issues": "https://github.com/PopArtDesign/badrock/issues"
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://wpackagist.org",
-      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
-    }
-  ],
   "require": {
     "php": ">=8.0",
     "composer/installers": "^2.2",
@@ -42,9 +34,9 @@
     "oscarotero/env": "^2.1",
     "roots/bedrock-autoloader": "^1.0",
     "roots/bedrock-disallow-indexing": "^2.0",
-    "roots/wordpress": "6.1.1",
-    "roots/wp-config": "1.0.0",
-    "roots/wp-password-bcrypt": "1.1.0",
+    "roots/wordpress": "^6.1",
+    "roots/wp-config": "^1.0",
+    "roots/wp-password-bcrypt": "^1.1",
     "wpackagist-theme/twentytwentythree": "^1.0",
     "roots/soil": "^4.1",
     "voronkovich/wordpress-mailer-dsn": "^0.0.4",
@@ -76,6 +68,13 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org",
+      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+    }
+  ],
   "extra": {
     "installer-paths": {
       "public/mu-plugins/{$name}/": [
