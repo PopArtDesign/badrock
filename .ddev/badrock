@@ -60,6 +60,7 @@ badrock_ddev_config() {
     --disable-settings-management \
     --docroot='public' \
     --create-docroot \
+    --upload-dir 'uploads' \
     --xdebug-enabled
 }
 
