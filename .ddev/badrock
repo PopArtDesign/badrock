@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
 
 which 'ddev' >/dev/null || {
-  echo 'DDEV is not installed: https://ddev.com/get-started/'
-  exit 1
+    echo 'DDEV is not installed: https://ddev.com/get-started/'
+    exit 1
 } >&2
 
 declare -r app_name="${0##*/}"
 
 main() {
-  if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
-    badrock_help
-    exit
-  fi
-
-  if [[ -f "${PWD}/.ddev/config.yaml" ]]; then
-    if [[ "${1:1:1}" == '-' ]]; then
-      ddev config "$@" && ddev restart
-      exit
-    else
-      exec ddev launch "$@" 2>/dev/null
+    if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+        badrock_help
+        exit
     fi
-  fi
 
-  badrock_init "$@"
+    if [[ -f "${PWD}/.ddev/config.yaml" ]]; then
+        if [[ "${1:1:1}" == '-' ]]; then
+            ddev config "$@" && ddev restart
+            exit
+        else
+            exec ddev launch "$@" 2>/dev/null
+        fi
+    fi
+
+    badrock_init "$@"
 }
 
 badrock_help() {
-  cat <<HELP
+    cat <<HELP
 Badrock DDEV wrapper: https://github.com/PopArtDesign/badrock
 
 Usage: ${app_name} [flags]
@@ -39,55 +39,55 @@ Flags:
 
 HELP
 
-  ddev config --help | sed \
+ddev config --help | sed \
     -e '1,/Flags/d' \
     -e '/Global Flags/,$d' \
     -e 's/^[[:space:]]\+/    /'
 }
 
 badrock_init() {
-  badrock_ddev_config "$@" \
-    && ddev composer create -y 'popartdesign/badrock:@dev' \
-    && badrock_wordpress_install \
-    && badrock_wordpress_config \
-    && badrock_install_extra_packages \
-    && ddev launch 2>/dev/null
+    badrock_ddev_config "$@" \
+        && ddev composer create -y 'popartdesign/badrock:@dev' \
+        && badrock_wordpress_install \
+        && badrock_wordpress_config \
+        && badrock_install_extra_packages \
+        && ddev launch 2>/dev/null
 }
 
 badrock_ddev_config() {
-  ddev config "$@" \
-    --project-type='wordpress' \
-    --disable-settings-management \
-    --docroot='public' \
-    --create-docroot \
-    --upload-dir 'uploads'
+    ddev config "$@" \
+        --project-type='wordpress' \
+        --disable-settings-management \
+        --docroot='public' \
+        --create-docroot \
+        --upload-dir 'uploads'
 }
 
 badrock_wordpress_install() {
-  ddev exec wp-cli core install \
-    --url='"${DDEV_PRIMARY_URL}"' \
-    --title='"${DDEV_PROJECT}"' \
-    --admin_user="${BADROCK_ADMIN_USER:-admin}" \
-    --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
-    --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
+    ddev exec wp-cli core install \
+        --url='"${DDEV_PRIMARY_URL}"' \
+        --title='"${DDEV_PROJECT}"' \
+        --admin_user="${BADROCK_ADMIN_USER:-admin}" \
+        --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
+        --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
 }
 
 badrock_wordpress_config() {
-  ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
+    ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
 
-  if [[ -n "${BADROCK_LANGUAGE}" ]]; then
-    ddev wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
-  fi
+    if [[ -n "${BADROCK_LANGUAGE}" ]]; then
+        ddev wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
+    fi
 }
 
 badrock_install_extra_packages() {
-  if [[ -n "${BADROCK_EXTRA_PACKAGES}" ]]; then
-    ddev composer require ${BADROCK_EXTRA_PACKAGES} || return 1
-  fi
+    if [[ -n "${BADROCK_EXTRA_PACKAGES}" ]]; then
+        ddev composer require ${BADROCK_EXTRA_PACKAGES} || return 1
+    fi
 
-  if [[ -n "${BADROCK_EXTRA_DEV_PACKAGES}" ]]; then
-    ddev composer require --dev ${BADROCK_EXTRA_DEV_PACKAGES} || return 1
-  fi
+    if [[ -n "${BADROCK_EXTRA_DEV_PACKAGES}" ]]; then
+        ddev composer require --dev ${BADROCK_EXTRA_DEV_PACKAGES} || return 1
+    fi
 }
 
 main "$@"
