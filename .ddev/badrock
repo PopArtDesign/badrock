@@ -59,7 +59,8 @@ badrock_ddev_config() {
     --project-type='wordpress' \
     --disable-settings-management \
     --docroot='public' \
-    --create-docroot
+    --create-docroot \
+    --xdebug-enabled
 }
 
 badrock_wordpress_install() {
