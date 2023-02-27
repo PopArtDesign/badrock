@@ -1,12 +1,12 @@
 # Application
+public/mu-plugins/*/
 public/plugins/*
 !public/plugins/.gitkeep
-public/mu-plugins/*
-!public/mu-plugins/.gitkeep
 public/themes/*
-!public/themes/app/
+!public/themes/.gitkeep
+public/uploads/*
+!public/uploads/.gitkeep
 public/upgrade/
-public/uploads/
 public/cache/
 public/db.php
 var/log/*
@@ -15,9 +15,6 @@ var/log/*
 # WordPress
 public/wp/
 public/.htaccess
-
-# Logs
-*.log
 
 # Dotenv
 .env
