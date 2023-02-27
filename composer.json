@@ -39,7 +39,7 @@
         "roots/wp-password-bcrypt": "^1.1",
         "wpackagist-theme/twentytwentythree": "^1.0",
         "roots/soil": "^4.1",
-        "voronkovich/wordpress-mailer-dsn": "^0.0.4",
+        "voronkovich/wordpress-mailer-dsn": "^0.0.5",
         "inpsyde/wonolog": "^1.0",
         "globalis/wp-unhooked": "^1.0"
     },
