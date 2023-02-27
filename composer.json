@@ -92,6 +92,7 @@
         "wordpress-install-dir": "public/wp"
     },
     "scripts": {
-        "lint": "tools/phpcs"
+        "lint": "PHP_CS_FIXER_IGNORE_ENV=true tools/php-cs-fixer fix --diff --dry-run",
+        "fix-cs": "PHP_CS_FIXER_IGNORE_ENV=true tools/php-cs-fixer fix"
     }
 }
