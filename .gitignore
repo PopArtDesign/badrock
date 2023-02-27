@@ -1,15 +1,19 @@
 # Application
 public/plugins/*
 !public/plugins/.gitkeep
-public/mu-plugins/*/
-public/themes/twentytwentythree/
-public/upgrade
-public/uploads/*
-!public/uploads/.gitkeep
-public/cache/*
+public/mu-plugins/*
+!public/mu-plugins/.gitkeep
+public/themes/*
+!public/themes/app/
+public/upgrade/
+public/uploads/
+public/cache/
+public/db.php
+var/log/*
+!var/log/.gitkeep
 
 # WordPress
-public/wp
+public/wp/
 public/.htaccess
 
 # Logs
@@ -21,10 +25,10 @@ public/.htaccess
 !.env.example
 
 # Composer
-/vendor
+vendor/
 
 # WP-CLI
 wp-cli.local.yml
 
 # Phive
-/tools
+tools/
