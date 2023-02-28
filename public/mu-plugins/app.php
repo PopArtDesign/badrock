@@ -14,11 +14,18 @@ use Inpsyde\Wonolog;
 use Monolog\Handler\FingersCrossedHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Symfony\Component\ErrorHandler\Debug;
 
 defined('ABSPATH') || exit;
 
 if (!is_blog_installed()) {
     return;
+}
+
+if (class_exists(Debug::class)) {
+    if (WP_DEBUG && WP_DEBUG_DISPLAY) {
+        Debug::enable();
+    }
 }
 
 if (defined('SOIL')) {
