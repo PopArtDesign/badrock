@@ -18,22 +18,20 @@ use Symfony\Component\ErrorHandler\Debug;
 
 defined('ABSPATH') || exit;
 
-if (!is_blog_installed()) {
-    return;
+/**
+ * Bootstrap Symfony ErrorHandler
+ *
+ * @see https://github.com/symfony/error-handler
+ */
+if (class_exists(Debug::class) && WP_DEBUG && WP_DEBUG_DISPLAY) {
+    Debug::enable();
 }
 
-if (class_exists(Debug::class)) {
-    if (WP_DEBUG && WP_DEBUG_DISPLAY) {
-        Debug::enable();
-    }
-}
-
-if (defined('SOIL')) {
-    add_action('after_setup_theme', function () {
-        add_theme_support('soil', SOIL);
-    });
-}
-
+/**
+ * Bootstrap Wonolog
+ *
+ * @see https://github.com/inpsyde/Wonolog
+ */
 if (defined('LOG_STREAM')) {
     $logHandler = new StreamHandler(LOG_STREAM, Logger::DEBUG);
     if (WP_ENV === 'production') {
@@ -42,6 +40,16 @@ if (defined('LOG_STREAM')) {
 
     Wonolog\bootstrap($logHandler);
     unset($logHandler);
+}
+
+if (!is_blog_installed()) {
+    return;
+}
+
+if (defined('SOIL')) {
+    add_action('after_setup_theme', function () {
+        add_theme_support('soil', SOIL);
+    });
 }
 
 if (class_exists(App::class)) {
