@@ -8,8 +8,9 @@
  * can.
  */
 
-use Roots\WPConfig\Config;
 use function Env\env;
+use Roots\WPConfig\Config;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Directory containing all of the site's files
@@ -29,19 +30,12 @@ $webroot_dir = $root_dir . '/public';
  * Use Dotenv to set required environment variables and load .env file in root
  * .env.local will override .env if it exists
  */
-if (file_exists($root_dir . '/.env')) {
-    $env_files = file_exists($root_dir . '/.env.local')
-        ? ['.env', '.env.local']
-        : ['.env'];
+if (file_exists($root_dir . '/.env.local.php') || file_exists($root_dir . '/.env')) {
+    $dotenv = new Dotenv('WP_ENV', 'WP_DEBUG');
+    $dotenv->setProdEnvs(['production']);
+    $dotenv->usePutenv();
 
-    $dotenv = Dotenv\Dotenv::createUnsafeImmutable($root_dir, $env_files, false);
-
-    $dotenv->load();
-
-    $dotenv->required(['WP_HOME', 'WP_SITEURL']);
-    if (!env('DATABASE_URL')) {
-        $dotenv->required(['DB_NAME', 'DB_USER', 'DB_PASSWORD']);
-    }
+    $dotenv->bootEnv($root_dir . '/.env', 'production');
 }
 
 /**

@@ -17,8 +17,7 @@ public/wp/
 public/.htaccess
 
 # Dotenv
-.env
-.env.*
+.env.local.*
 !.env.example
 
 # Composer
