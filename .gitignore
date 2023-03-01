@@ -27,4 +27,6 @@ vendor/
 wp-cli.local.yml
 
 # Phive
-tools/
+tools/*
+!tools/deploy.sh
+!tools/deploy_tasks.sh
