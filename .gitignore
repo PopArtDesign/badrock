@@ -28,5 +28,7 @@ wp-cli.local.yml
 
 # Phive
 tools/*
+!tools/build.sh
+!tools/build_tasks.sh
 !tools/deploy.sh
 !tools/deploy_tasks.sh
