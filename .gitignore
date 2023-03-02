@@ -26,9 +26,10 @@ vendor/
 # WP-CLI
 wp-cli.local.yml
 
-# Phive
+# Tools
 tools/*
 !tools/build.sh
 !tools/build_tasks.sh
 !tools/deploy.sh
 !tools/deploy_tasks.sh
+!tools/dotenv-dump.php
