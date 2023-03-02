@@ -8,9 +8,7 @@ dst_dir="${dst##*:}"
 
 rsync -chav --delete \
     --include='.env.local.php' \
-    --exclude='.env' \
-    --exclude='.env.*' \
-    --exclude='/.git/' \
+    --exclude='/.*' \
     --exclude='/node_modules/' \
     --exclude='/public/uploads/*' \
     --exclude='/var/log/*' \
