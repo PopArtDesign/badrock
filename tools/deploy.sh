@@ -7,6 +7,7 @@ dst_host="${dst%%:*}"
 dst_dir="${dst##*:}"
 
 rsync -chav --delete \
+    --include='.env.local.php' \
     --exclude='.env' \
     --exclude='.env.*' \
     --exclude='/.git/' \
