@@ -2,4 +2,4 @@
 
 phive install --copy wp && \
     composer install --no-dev --optimize-autoloader && \
-    php tools/dotenv-dump.php
+    php tools/dotenv-dump.php "${WP_ENV}"
