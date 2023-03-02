@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
 
-composer install --no-dev --optimize-autoloader
+phive install --copy wp &&
+    composer install --no-dev --optimize-autoloader
