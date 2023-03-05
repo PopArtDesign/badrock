@@ -23,7 +23,7 @@ add('writable_dirs', [
     'var/log',
 ]);
 
-set('build_dir', dirname(__DIR__) . '/var/build');
+set('build_path', dirname(__DIR__) . '/var/build');
 
 set('tools_path', '{{release_or_current_path}}/tools');
 
@@ -36,15 +36,15 @@ set('wordpress_installed', function () {
 // Tasks
 desc('Checkout repo');
 task('badrock:checkout', function () {
-    runLocally('rm -rf "{{build_dir}}"');
-    runLocally('mkdir -p "{{build_dir}}"');
-    runLocally('git --work-tree="{{build_dir}}" checkout -f {{target}}');
+    runLocally('rm -rf "{{build_path}}"');
+    runLocally('mkdir -p "{{build_path}}"');
+    runLocally('git --work-tree="{{build_path}}" checkout -f {{target}}');
 })->once();
 
 desc('Install tools (wp-cli)');
 task('badrock:tools', function () {
     runLocally('phive install --copy wp', [
-        'cwd' => get('build_dir'),
+        'cwd' => get('build_path'),
     ]);
 })->once();
 
@@ -53,7 +53,7 @@ task('badrock:rsync', function () {
     $rsyncSrcPrev = get('rsync_src');
     $rsyncDstPrev = get('rsync_dest');
 
-    set('rsync_src', '{{build_dir}}');
+    set('rsync_src', '{{build_path}}');
     set('rsync_dest', '{{release_path}}');
 
     invoke('rsync');
