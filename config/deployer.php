@@ -8,6 +8,8 @@ require 'contrib/rsync.php';
 add('recipes', ['badrock']);
 
 // Config
+set('environment', 'production');
+
 add('shared_files', []);
 
 add('shared_dirs', [
@@ -23,7 +25,9 @@ add('writable_dirs', [
 
 set('build_dir', dirname(__DIR__) . '/var/build');
 
-set('bin/wp', '{{bin/php}} {{release_or_current_path}}/tools/wp');
+set('tools_path', '{{release_or_current_path}}/tools');
+
+set('bin/wp', '{{bin/php}} {{tools_path}}/wp');
 
 set('wordpress_installed', function () {
     return test('{{bin/wp}} core is-installed');
@@ -101,6 +105,11 @@ task('badrock:migrate-db', function () {
     }
 });
 
+desc('Dump .env files to .env.local.php');
+task('badrock:dump-dotenv', function () {
+    run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
+});
+
 desc('WordPress: clear cache');
 task('badrock:clear-cache', function () {
     if (!get('wordpress_installed')) {
@@ -117,6 +126,7 @@ task('badrock:build', [
 ]);
 
 task('badrock:deploy', [
+    'badrock:dump-dotenv',
     'badrock:migrate-db',
     'badrock:languages',
     'badrock:clear-cache',
