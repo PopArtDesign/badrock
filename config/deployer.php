@@ -55,7 +55,7 @@ task('deploy:update_code', function () {
     invoke('rsync');
 });
 
-desc('Install WordPress languages');
+desc('WordPress: install languages');
 task('badrock:languages', function () {
     if (!isWordPressInstalled()) {
         return;
@@ -81,16 +81,13 @@ task('badrock:languages', function () {
     run('tools/wp language theme update --all');
 });
 
+desc('WordPress: migrate database');
 task('badrock:db-migrations', function () {
     if (!isWordPressInstalled()) {
         return;
     }
 
     cd('{{release_or_current_path}}');
-
-    if (!test('tools/wp core is-installed')) {
-        return;
-    }
 
     run('tools/wp core update-db');
 
@@ -99,6 +96,7 @@ task('badrock:db-migrations', function () {
     }
 });
 
+desc('WordPress: clear cache');
 task('badrock:clear-cache', function () {
     if (!isWordPressInstalled()) {
         return;
