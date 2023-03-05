@@ -5,6 +5,8 @@ namespace Deployer;
 require 'recipe/common.php';
 require 'contrib/rsync.php';
 
+add('recipes', ['badrock']);
+
 // Config
 add('shared_files', []);
 
@@ -14,25 +16,18 @@ add('shared_dirs', [
 ]);
 
 add('writable_dirs', [
-    'public/uploads'
+    'public/uploads',
+    'var',
+    'var/log',
 ]);
 
 set('build_dir', dirname(__DIR__) . '/var/build');
 
-function isWordPressInstalled()
-{
-    static $installed = null;
+set('bin/wp', '{{bin/php}} {{release_or_current_path}}/tools/wp');
 
-    if (null === $installed) {
-        cd('{{release_or_current_path}}');
-
-        if (!$installed = test('tools/wp core is-installed')) {
-            warning('WordPress is not installed.');
-        }
-    }
-
-    return $installed;
-}
+set('wordpress_installed', function () {
+    return test('{{bin/wp}} core is-installed');
+});
 
 // Tasks
 desc('Checkout repo');
@@ -40,24 +35,37 @@ task('badrock:checkout', function () {
     runLocally('rm -rf "{{build_dir}}"');
     runLocally('mkdir -p "{{build_dir}}"');
     runLocally('git --work-tree="{{build_dir}}" checkout -f {{target}}');
-});
+})->once();
 
 desc('Install tools (wp-cli)');
 task('badrock:tools', function () {
     runLocally('phive install --copy wp', [
         'cwd' => get('build_dir'),
     ]);
+})->once();
+
+desc('Upload code to remote server');
+task('badrock:rsync', function () {
+    $rsyncSrcPrev = get('rsync_src');
+    $rsyncDstPrev = get('rsync_dest');
+
+    set('rsync_src', '{{build_dir}}');
+    set('rsync_dest', '{{release_path}}');
+
+    invoke('rsync');
+
+    set('rsync_src', $rsyncSrcPrev);
+    set('rsync_dest', $rsyncDstPrev);
 });
 
 task('deploy:update_code', function () {
-    set('rsync_src', '{{build_dir}}');
-
-    invoke('rsync');
+    invoke('badrock:rsync');
 });
 
 desc('WordPress: install languages');
 task('badrock:languages', function () {
-    if (!isWordPressInstalled()) {
+    if (!get('wordpress_installed')) {
+        warning('WordPress is not installed.');
         return;
     }
 
@@ -71,40 +79,36 @@ task('badrock:languages', function () {
         $languages = implode(' ', $languages);
     }
 
-    cd('{{release_or_current_path}}');
-
-    run('tools/wp language core install ' . $languages);
-    run('tools/wp language plugin install --all '. $languages);
-    run('tools/wp language theme install --all ' . $languages);
-    run('tools/wp language core update');
-    run('tools/wp language plugin update --all');
-    run('tools/wp language theme update --all');
+    run('{{bin/wp}} language core install ' . $languages);
+    run('{{bin/wp}} language plugin install --all '. $languages);
+    run('{{bin/wp}} language theme install --all ' . $languages);
+    run('{{bin/wp}} language core update');
+    run('{{bin/wp}} language plugin update --all');
+    run('{{bin/wp}} language theme update --all');
 });
 
 desc('WordPress: migrate database');
-task('badrock:db-migrations', function () {
-    if (!isWordPressInstalled()) {
+task('badrock:migrate-db', function () {
+    if (!get('wordpress_installed')) {
+        warning('WordPress is not installed.');
         return;
     }
 
-    cd('{{release_or_current_path}}');
+    run('{{bin/wp}} core update-db');
 
-    run('tools/wp core update-db');
-
-    if (!test('tools/wp plugin is-installed woocommerce')) {
-        run('tools/wp wc update');
+    if (test('{{bin/wp}} plugin is-installed woocommerce')) {
+        run('{{bin/wp}} wc update');
     }
 });
 
 desc('WordPress: clear cache');
 task('badrock:clear-cache', function () {
-    if (!isWordPressInstalled()) {
+    if (!get('wordpress_installed')) {
+        warning('WordPress is not installed.');
         return;
     }
 
-    cd('{{release_or_current_path}}');
-
-    run('tools/wp cache flush');
+    run('{{bin/wp}} cache flush');
 });
 
 task('badrock:build', [
@@ -113,7 +117,7 @@ task('badrock:build', [
 ]);
 
 task('badrock:deploy', [
-    'badrock:db-migrations',
+    'badrock:migrate-db',
     'badrock:languages',
     'badrock:clear-cache',
 ]);
