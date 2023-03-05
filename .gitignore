@@ -11,6 +11,7 @@ public/cache/
 public/db.php
 var/log/*
 !var/log/.gitkeep
+var/build/
 
 # WordPress
 public/wp/
@@ -28,8 +29,4 @@ wp-cli.local.yml
 
 # Tools
 tools/*
-!tools/build.sh
-!tools/build_tasks.sh
-!tools/deploy.sh
-!tools/deploy_tasks.sh
 !tools/dotenv-dump.php
