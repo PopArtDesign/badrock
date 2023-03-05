@@ -25,6 +25,8 @@ add('writable_dirs', [
 
 set('build_path', dirname(__DIR__) . '/var/build');
 
+set('secrets_path', '{{build_path}}/config/secrets');
+
 set('tools_path', '{{release_or_current_path}}/tools');
 
 set('bin/wp', 'cd "{{release_or_current_path}}" && {{bin/php}} "{{tools_path}}/wp"');
@@ -105,6 +107,17 @@ task('badrock:migrate-db', function () {
     }
 });
 
+desc('Deploy secrets');
+task('badrock:secrets', function () {
+    $secrets = parse('{{secrets_path}}/{{environment}}');
+
+    if (!file_exists($secrets)) {
+        return;
+    }
+
+    upload($secrets, '{{release_or_current_path}}/.env.{{environment}}.local');
+});
+
 desc('Dump .env files to .env.local.php');
 task('badrock:dump-dotenv', function () {
     run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
@@ -126,6 +139,7 @@ task('badrock:build', [
 ]);
 
 task('badrock:deploy', [
+    'badrock:secrets',
     'badrock:dump-dotenv',
     'badrock:migrate-db',
     'badrock:languages',
