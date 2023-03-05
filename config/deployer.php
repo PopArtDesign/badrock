@@ -100,7 +100,7 @@ task('badrock:migrate-db', function () {
 
     run('{{bin/wp}} core update-db');
 
-    if (test('{{bin/wp}} plugin is-installed woocommerce')) {
+    if (test('{{bin/wp}} plugin is-active woocommerce')) {
         run('{{bin/wp}} wc update');
     }
 });
