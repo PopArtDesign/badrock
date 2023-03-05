@@ -17,7 +17,7 @@ add('writable_dirs', [
     'public/uploads'
 ]);
 
-set('build_dir', realpath(__DIR__ . '/../var/build'));
+set('build_dir', dirname(__DIR__) . '/var/build');
 
 // Tasks
 desc('Prepare build directory');
