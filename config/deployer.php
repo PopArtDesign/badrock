@@ -153,6 +153,3 @@ task('deploy', [
     'badrock:deploy',
     'deploy:publish',
 ]);
-
-// Hooks
-after('deploy:failed', 'deploy:unlock');
