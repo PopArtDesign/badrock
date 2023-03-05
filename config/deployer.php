@@ -19,6 +19,21 @@ add('writable_dirs', [
 
 set('build_dir', dirname(__DIR__) . '/var/build');
 
+function isWordPressInstalled()
+{
+    static $installed = null;
+
+    if (null === $installed) {
+        cd('{{release_or_current_path}}');
+
+        if (!$installed = test('tools/wp core is-installed')) {
+            warning('WordPress is not installed.');
+        }
+    }
+
+    return $installed;
+}
+
 // Tasks
 desc('Checkout repo');
 task('badrock:checkout', function () {
@@ -42,6 +57,10 @@ task('deploy:update_code', function () {
 
 desc('Install WordPress languages');
 task('badrock:languages', function () {
+    if (!isWordPressInstalled()) {
+        return;
+    }
+
     $languages = get('languages');
 
     if (empty($languages)) {
@@ -54,10 +73,6 @@ task('badrock:languages', function () {
 
     cd('{{release_or_current_path}}');
 
-    if (!test('tools/wp core is-installed')) {
-        return;
-    }
-
     run('tools/wp language core install ' . $languages);
     run('tools/wp language plugin install --all '. $languages);
     run('tools/wp language theme install --all ' . $languages);
@@ -67,6 +82,10 @@ task('badrock:languages', function () {
 });
 
 task('badrock:db-migrations', function () {
+    if (!isWordPressInstalled()) {
+        return;
+    }
+
     cd('{{release_or_current_path}}');
 
     if (!test('tools/wp core is-installed')) {
@@ -80,14 +99,25 @@ task('badrock:db-migrations', function () {
     }
 });
 
+task('badrock:clear-cache', function () {
+    if (!isWordPressInstalled()) {
+        return;
+    }
+
+    cd('{{release_or_current_path}}');
+
+    run('tools/wp cache flush');
+});
+
 task('badrock:build', [
     'badrock:checkout',
     'badrock:tools',
 ]);
 
 task('badrock:deploy', [
-    'badrock:languages',
     'badrock:db-migrations',
+    'badrock:languages',
+    'badrock:clear-cache',
 ]);
 
 task('deploy', [
