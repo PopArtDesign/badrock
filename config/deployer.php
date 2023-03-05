@@ -27,7 +27,7 @@ set('build_path', dirname(__DIR__) . '/var/build');
 
 set('tools_path', '{{release_or_current_path}}/tools');
 
-set('bin/wp', '{{bin/php}} {{tools_path}}/wp');
+set('bin/wp', 'cd "{{release_or_current_path}}" && {{bin/php}} "{{tools_path}}/wp"');
 
 set('wordpress_installed', function () {
     return test('{{bin/wp}} core is-installed');
