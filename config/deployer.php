@@ -29,11 +29,31 @@ set('secrets_path', '{{build_path}}/config/secrets');
 
 set('tools_path', '{{release_or_current_path}}/tools');
 
-set('bin/wp', 'cd "{{release_or_current_path}}" && {{bin/php}} "{{tools_path}}/wp"');
+set('rsync_src', '{{build_path}}');
+
+set('bin/wp', '{{tools_path}}/wp');
 
 set('wordpress_installed', function () {
-    return test('{{bin/wp}} core is-installed');
+    return testWP('core is-installed');
 });
+
+set('woocommerce_installed', function () {
+    return testWP('plugin is-active woocommerce');
+});
+
+function runWP($args, $options = [])
+{
+    cd('{{release_or_current_path}}');
+
+    return run('"{{bin/php}}" "{{bin/wp}}" '. $args, $options);
+}
+
+function testWP($args)
+{
+    cd('{{release_or_current_path}}');
+
+    return test('"{{bin/php}}" "{{bin/wp}}" '. $args);
+}
 
 // Tasks
 desc('Checkout repo');
@@ -52,16 +72,7 @@ task('badrock:tools', function () {
 
 desc('Upload code to remote server');
 task('badrock:rsync', function () {
-    $rsyncSrcPrev = get('rsync_src');
-    $rsyncDstPrev = get('rsync_dest');
-
-    set('rsync_src', '{{build_path}}');
-    set('rsync_dest', '{{release_path}}');
-
     invoke('rsync');
-
-    set('rsync_src', $rsyncSrcPrev);
-    set('rsync_dest', $rsyncDstPrev);
 });
 
 task('deploy:update_code', function () {
@@ -70,13 +81,13 @@ task('deploy:update_code', function () {
 
 desc('WordPress: download core');
 task('badrock:wordpress', function () {
-    run('{{bin/wp}} core download');
+    runWP('core download');
 });
 
 desc('WordPress: install languages');
 task('badrock:languages', function () {
     if (!get('wordpress_installed')) {
-        warning('WordPress is not installed.');
+        warning('Skip: WordPress is not installed.');
         return;
     }
 
@@ -90,25 +101,25 @@ task('badrock:languages', function () {
         $languages = implode(' ', $languages);
     }
 
-    run('{{bin/wp}} language core install ' . $languages);
-    run('{{bin/wp}} language plugin install --all '. $languages);
-    run('{{bin/wp}} language theme install --all ' . $languages);
-    run('{{bin/wp}} language core update');
-    run('{{bin/wp}} language plugin update --all');
-    run('{{bin/wp}} language theme update --all');
+    runWP('language core install ' . $languages);
+    runWP('language plugin install --all '. $languages);
+    runWP('language theme install --all ' . $languages);
+    runWP('language core update');
+    runWP('language plugin update --all');
+    runWP('language theme update --all');
 });
 
 desc('WordPress: migrate database');
 task('badrock:migrate-db', function () {
     if (!get('wordpress_installed')) {
-        warning('WordPress is not installed.');
+        warning('Skip: WordPress is not installed.');
         return;
     }
 
-    run('{{bin/wp}} core update-db');
+    runWP('core update-db');
 
-    if (test('{{bin/wp}} plugin is-active woocommerce')) {
-        run('{{bin/wp}} wc update');
+    if (get('woocommerce_installed')) {
+        runWP('wc update');
     }
 });
 
@@ -125,17 +136,17 @@ task('badrock:secrets', function () {
 
 desc('Dump .env files to .env.local.php');
 task('badrock:dump-dotenv', function () {
-    run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
+    run('"{{bin/php}}" "{{tools_path}}/dotenv-dump.php" {{environment}}');
 });
 
 desc('WordPress: clear cache');
 task('badrock:clear-cache', function () {
     if (!get('wordpress_installed')) {
-        warning('WordPress is not installed.');
+        warning('Skip: WordPress is not installed.');
         return;
     }
 
-    run('{{bin/wp}} cache flush');
+    runWP('cache flush');
 });
 
 task('badrock:build', [
