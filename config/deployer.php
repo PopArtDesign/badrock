@@ -68,6 +68,11 @@ task('deploy:update_code', function () {
     invoke('badrock:rsync');
 });
 
+desc('WordPress: download core');
+task('badrock:wordpress', function () {
+    run('{{bin/wp}} core download');
+});
+
 desc('WordPress: install languages');
 task('badrock:languages', function () {
     if (!get('wordpress_installed')) {
@@ -141,6 +146,7 @@ task('badrock:build', [
 task('badrock:deploy', [
     'badrock:secrets',
     'badrock:dump-dotenv',
+    'badrock:wordpress',
     'badrock:migrate-db',
     'badrock:languages',
     'badrock:clear-cache',
