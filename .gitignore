@@ -6,26 +6,32 @@ public/themes/*
 !public/themes/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
-public/upgrade/
-public/cache/
-public/db.php
 var/log/*
 !var/log/.gitkeep
 var/build/
-
-# WordPress
-public/wp/
-public/.htaccess
 
 # Dotenv
 .env.local.*
 !.env.example
 
-# Composer
-vendor/
+# WordPress
+public/wp-admin
+public/wp-content
+public/wp-includes
+public/upgrade
+public/cache
+public/index.php
+public/xmlrpc.php
+public/db.php
+public/wp-*.php
+public/license.txt
+public/readme.html
 
 # WP-CLI
 wp-cli.local.yml
+
+# Composer
+vendor/
 
 # Tools
 tools/*
