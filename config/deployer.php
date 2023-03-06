@@ -31,7 +31,7 @@ set('tools_path', '{{release_or_current_path}}/tools');
 
 set('rsync_src', '{{build_path}}');
 
-set('bin/wp', '{{release_or_current_path}}/vendor/wp-cli/wp-cli/bin/wp');
+set('bin/wp', '{{release_or_current_path}}/vendor/bin/wp');
 
 set('wordpress_installed', function () {
     return testWP('core is-installed');
@@ -41,18 +41,18 @@ set('woocommerce_installed', function () {
     return testWP('plugin is-active woocommerce');
 });
 
-function runWP($args, $options = [])
+function runWP($command)
 {
     cd('{{release_or_current_path}}');
 
-    return run('"{{bin/php}}" "{{bin/wp}}" '. $args, $options);
+    return run('WP_CLI_PHP="{{bin/php}}" "{{bin/wp}}" '. $command);
 }
 
-function testWP($args)
+function testWP($command)
 {
     cd('{{release_or_current_path}}');
 
-    return test('"{{bin/php}}" "{{bin/wp}}" '. $args);
+    return test('WP_CLI_PHP="{{bin/php}}" "{{bin/wp}}" '. $command);
 }
 
 // Tasks
