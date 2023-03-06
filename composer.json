@@ -33,7 +33,6 @@
         "oscarotero/env": "^2.1",
         "roots/bedrock-autoloader": "^1.0",
         "roots/bedrock-disallow-indexing": "^2.0",
-        "roots/wordpress": "^6.1",
         "roots/wp-config": "^1.0",
         "roots/wp-password-bcrypt": "^1.1",
         "wpackagist-theme/twentytwentythree": "^1.0",
@@ -63,8 +62,7 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "allow-plugins": {
-            "composer/installers": true,
-            "roots/wordpress-core-installer": true
+            "composer/installers": true
         }
     },
     "minimum-stability": "dev",
@@ -89,8 +87,7 @@
             ],
             "public/plugins/{$name}/": ["type:wordpress-plugin"],
             "public/themes/{$name}/": ["type:wordpress-theme"]
-        },
-        "wordpress-install-dir": "public/wp"
+        }
     },
     "scripts": {
         "cs:lint": "PHP_CS_FIXER_IGNORE_ENV=true tools/php-cs-fixer fix --diff --dry-run",

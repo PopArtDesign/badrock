@@ -64,12 +64,13 @@ badrock_ddev_config() {
 }
 
 badrock_wordpress_install() {
-    ddev exec wp-cli core install \
-        --url='"${DDEV_PRIMARY_URL}"' \
-        --title='"${DDEV_PROJECT}"' \
-        --admin_user="${BADROCK_ADMIN_USER:-admin}" \
-        --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
-        --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
+    ddev exec wp-cli core download && \
+        ddev exec wp-cli core install \
+            --url='"${DDEV_PRIMARY_URL}"' \
+            --title='"${DDEV_PROJECT}"' \
+            --admin_user="${BADROCK_ADMIN_USER:-admin}" \
+            --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
+            --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
 }
 
 badrock_wordpress_config() {
