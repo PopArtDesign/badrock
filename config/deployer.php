@@ -31,7 +31,7 @@ set('tools_path', '{{release_or_current_path}}/tools');
 
 set('rsync_src', '{{build_path}}');
 
-set('bin/wp', '{{tools_path}}/wp');
+set('bin/wp', '{{release_or_current_path}}/vendor/wp-cli/wp-cli/bin/wp');
 
 set('wordpress_installed', function () {
     return testWP('core is-installed');
@@ -61,13 +61,6 @@ task('badrock:checkout', function () {
     runLocally('rm -rf "{{build_path}}"');
     runLocally('mkdir -p "{{build_path}}"');
     runLocally('git --work-tree="{{build_path}}" checkout -f {{target}}');
-})->once();
-
-desc('Install tools (wp-cli)');
-task('badrock:tools', function () {
-    runLocally('phive install --copy wp', [
-        'cwd' => get('build_path'),
-    ]);
 })->once();
 
 desc('Upload code to remote server');
@@ -151,7 +144,6 @@ task('badrock:clear-cache', function () {
 
 task('badrock:build', [
     'badrock:checkout',
-    'badrock:tools',
 ]);
 
 task('badrock:deploy', [
