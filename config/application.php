@@ -127,7 +127,7 @@ $log_dir = $root_dir . '/var/log';
 Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
 Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
 // WooCommerce
-Config::define('WC_LOG_DIR', $log_dir);
+Config::define('WC_LOG_DIR', $log_dir . '/');
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
