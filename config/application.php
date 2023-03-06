@@ -120,6 +120,16 @@ Config::define('SCRIPT_DEBUG', false);
 ini_set('display_errors', '0');
 
 /**
+ * Logging Settings
+ */
+$log_dir = $root_dir . '/var/log';
+// It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
+Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
+Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
+// WooCommerce
+Config::define('WC_LOG_DIR', $log_dir);
+
+/**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
  * See https://codex.wordpress.org/Function_Reference/is_ssl#Notes
  */
@@ -144,16 +154,6 @@ Config::define('WP_UNHOOKED_CONFIG', [
     'disable-admin-dashboard-welcome-panel' => true,
     'disable-admin-dashboard-widget-primary' => true,
 ]);
-
-/**
- * Logging Settings
- */
-$log_dir = $root_dir . '/var/log';
-// It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
-Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
-Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
-// WooCommerce
-Config::define('WC_LOG_DIR', $log_dir);
 
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 
