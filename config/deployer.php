@@ -18,6 +18,7 @@ add('shared_dirs', [
 ]);
 
 add('writable_dirs', [
+    'public/cache',
     'public/uploads',
     'var',
     'var/log',
