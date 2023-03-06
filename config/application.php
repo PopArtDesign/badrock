@@ -116,7 +116,6 @@ Config::define('FS_METHOD', 'direct');
  * Debugging Settings
  */
 Config::define('WP_DEBUG_DISPLAY', false);
-Config::define('WP_DEBUG_LOG', false);
 Config::define('SCRIPT_DEBUG', false);
 ini_set('display_errors', '0');
 
@@ -146,8 +145,15 @@ Config::define('WP_UNHOOKED_CONFIG', [
     'disable-admin-dashboard-widget-primary' => true,
 ]);
 
+/**
+ * Logging Settings
+ */
+$log_dir = $root_dir . '/var/log';
 // It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
-Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/var/log/%s.log', $root_dir, WP_ENV));
+Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
+Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
+// WooCommerce
+Config::define('WC_LOG_DIR', $log_dir);
 
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 
