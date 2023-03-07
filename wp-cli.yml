@@ -2,9 +2,19 @@ __version__: &version
   version: 6.1
   skip-content: true
 
+__languages__: &languages
+  1: en_US
+  2: ru_RU
+
 path: public
 server:
     docroot: public
 
 core download: *version
 core update: *version
+
+language core install: *languages
+language plugin install: *languages
+    all: true
+language theme install: *languages
+    all: true

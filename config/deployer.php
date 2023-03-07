@@ -85,22 +85,9 @@ task('badrock:languages', function () {
         return;
     }
 
-    $languages = get('languages');
-
-    if (empty($languages)) {
-        return;
-    }
-
-    if (is_array($languages)) {
-        $languages = implode(' ', $languages);
-    }
-
-    runWP('language core install ' . $languages);
-    runWP('language plugin install --all '. $languages);
-    runWP('language theme install --all ' . $languages);
-    runWP('language core update');
-    runWP('language plugin update --all');
-    runWP('language theme update --all');
+    runWP('language core install');
+    runWP('language plugin install --all');
+    runWP('language theme install --all');
 });
 
 desc('WordPress: migrate database');

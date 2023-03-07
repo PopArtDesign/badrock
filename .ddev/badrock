@@ -49,8 +49,8 @@ badrock_init() {
     badrock_ddev_config "$@" \
         && ddev composer create -y 'popartdesign/badrock:@dev' \
         && badrock_wordpress_install \
-        && badrock_wordpress_config \
         && badrock_install_extra_packages \
+        && badrock_wordpress_config \
         && ddev launch 2>/dev/null
 }
 
@@ -75,6 +75,10 @@ badrock_wordpress_install() {
 
 badrock_wordpress_config() {
     ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
+
+    ddev wp language core install && \
+        ddev wp language plugin install && \
+        ddev wp language theme install || return 1
 
     if [[ -n "${BADROCK_LANGUAGE}" ]]; then
         ddev wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
