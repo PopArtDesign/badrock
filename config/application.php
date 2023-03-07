@@ -13,6 +13,14 @@ use Roots\WPConfig\Config;
 use Symfony\Component\Dotenv\Dotenv;
 
 /**
+ * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
+ * See https://codex.wordpress.org/Function_Reference/is_ssl#Notes
+ */
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
+/**
  * Directory containing all of the site's files
  *
  * @var string
@@ -128,14 +136,6 @@ Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir,
 Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
 // WooCommerce
 Config::define('WC_LOG_DIR', $log_dir . '/');
-
-/**
- * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
- * See https://codex.wordpress.org/Function_Reference/is_ssl#Notes
- */
-if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-    $_SERVER['HTTPS'] = 'on';
-}
 
 // https://github.com/roots/soil#modules
 Config::define('SOIL', [
