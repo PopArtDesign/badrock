@@ -90,6 +90,27 @@ task('badrock:languages', function () {
     runWP('language theme install --all');
 });
 
+desc('WordPress: activate/deactivate plugins');
+task('badrock:active-plugins', function () {
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+        return;
+    }
+
+    $plugins = get('wordpress_active_plugins', []);
+    if (empty($plugins)) {
+        return;
+    }
+
+    foreach ($plugins as $plugin => $active) {
+        if ($active) {
+            runWP('plugin activate '. $plugin);
+        } else {
+            runWP('plugin deactivate '. $plugin);
+        }
+    }
+});
+
 desc('WordPress: migrate database');
 task('badrock:migrate-db', function () {
     if (!get('wordpress_installed')) {
@@ -138,6 +159,7 @@ task('badrock:deploy', [
     'badrock:secrets',
     'badrock:dump-dotenv',
     'badrock:wordpress',
+    'badrock:active-plugins',
     'badrock:migrate-db',
     'badrock:languages',
     'badrock:clear-cache',
