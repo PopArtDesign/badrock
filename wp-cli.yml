@@ -1,10 +1,10 @@
-__version__: &version
-  version: 6.1
-  skip-content: true
+VERSION: &version
+    version: 6.1
+    skip-content: true
 
-__languages__: &languages
-  1: en_US
-  2: ru_RU
+LANGUAGES: &languages
+    1: en_US
+    2: ru_RU
 
 path: public
 server:
