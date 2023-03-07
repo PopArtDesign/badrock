@@ -13,13 +13,13 @@ set('environment', 'production');
 add('shared_files', []);
 
 add('shared_dirs', [
-    'public/uploads',
+    'public/wp-content/uploads',
     'var/log',
 ]);
 
 add('writable_dirs', [
-    'public/cache',
-    'public/uploads',
+    'public/wp-content/cache',
+    'public/wp-content/uploads',
     'var',
     'var/log',
 ]);
@@ -144,9 +144,15 @@ task('badrock:deploy', [
 ]);
 
 task('deploy', [
+    'deploy:info',
     'badrock:build',
-    'deploy:prepare',
+    'deploy:setup',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    'deploy:shared',
     'deploy:vendors',
     'badrock:deploy',
+    'deploy:writable',
     'deploy:publish',
 ]);
