@@ -77,7 +77,7 @@
     ],
     "extra": {
         "installer-paths": {
-            "public/mu-plugins/{$name}/": [
+            "public/wp-content/mu-plugins/{$name}/": [
                 "type:wordpress-muplugin",
                 "awesomemotive/wp-mail-smtp",
                 "johnbillion/query-monitor",
@@ -86,8 +86,8 @@
                 "wpackagist-plugin/query-monitor",
                 "wpackagist-plugin/soil"
             ],
-            "public/plugins/{$name}/": ["type:wordpress-plugin"],
-            "public/themes/{$name}/": ["type:wordpress-theme"]
+            "public/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
+            "public/wp-content/themes/{$name}/": ["type:wordpress-theme"]
         }
     },
     "scripts": {

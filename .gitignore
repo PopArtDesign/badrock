@@ -1,38 +1,32 @@
 # Application
-public/mu-plugins/*/
-public/plugins/*
-!public/plugins/.gitkeep
-public/themes/*
-!public/themes/.gitkeep
-public/uploads/*
-!public/uploads/.gitkeep
-var/log/*
-!var/log/.gitkeep
-var/build/
+/public/*
+!/public/wp-content
+/public/wp-content/*
+!/public/wp-content/mu-plugins/
+/public/wp-content/mu-plugins/*/
+!/public/wp-content/plugins/
+/public/wp-content/plugins/*
+!/public/wp-content/plugins/.gitkeep
+!/public/wp-content/themes/
+/public/wp-content/themes/*
+!/public/wp-content/themes/.gitkeep
+!/public/wp-content/uploads/
+/public/wp-content/uploads/*
+!/public/wp-content/uploads/.gitkeep
+/var/log/*
+!/var/log/.gitkeep
+/var/build/
 
 # Dotenv
-.env.local.*
-!.env.example
-
-# WordPress
-public/wp-admin
-public/wp-content
-public/wp-includes
-public/upgrade
-public/cache
-public/index.php
-public/xmlrpc.php
-public/db.php
-public/wp-*.php
-public/license.txt
-public/readme.html
+/.env.local.*
+!/.env.example
 
 # WP-CLI
-wp-cli.local.yml
+/wp-cli.local.yml
 
 # Composer
-vendor/
+/vendor
 
 # Tools
-tools/*
-!tools/dotenv-dump.php
+/tools/*
+!/tools/dotenv-dump.php
