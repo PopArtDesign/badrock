@@ -63,7 +63,7 @@ if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'd
  * URLs
  */
 Config::define('WP_HOME', env('WP_HOME'));
-Config::define('WP_SITEURL', env('WP_SITEURL'));
+Config::define('WP_SITEURL', env('WP_SITEURL') ?? Config::get('WP_HOME'));
 
 /**
  * DB settings
