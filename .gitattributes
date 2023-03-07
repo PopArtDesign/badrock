@@ -1,7 +1,2 @@
-/.circleci export-ignore
-/.editorconfig export-ignore
-/.gitattributes export-ignore
-/.github export-ignore
-
 # https://github.com/elasticdog/transcrypt
 /config/secrets/* filter=crypt diff=crypt merge=crypt
