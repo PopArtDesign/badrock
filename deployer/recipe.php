@@ -86,7 +86,7 @@ function wpGetPluginsList()
 
 function wpGetPluginStatus($plugin, $refresh = false)
 {
-    $plugins = $refresh ? wpGetPluginsList() : get('{{wordpress_installed_plugins}}');
+    $plugins = $refresh ? wpGetPluginsList() : get('wordpress_installed_plugins');
 
     return $plugins[$plugin]['status'] ?? 'not-installed';
 }
