@@ -4,13 +4,12 @@ namespace Deployer;
 
 require 'recipe/common.php';
 require 'contrib/rsync.php';
+require __DIR__.'/wp-cli.php';
 
 add('recipes', ['badrock']);
 
 // Config
 set('environment', 'production');
-
-add('shared_files', []);
 
 add('shared_dirs', [
     'public/wp-content/uploads',
@@ -31,29 +30,70 @@ set('secrets_path', '{{build_path}}/config/secrets');
 set('tools_path', '{{release_or_current_path}}/tools');
 
 set('rsync_src', '{{build_path}}');
-
-set('bin/wp', '{{release_or_current_path}}/vendor/bin/wp');
+add('rsync', [
+    'exclude' => [
+        '.ddev',
+        '.git',
+        '.gitattributes',
+        '.gitignore',
+        'Makefile',
+        'config/secrets',
+        'deploy.php',
+        'deployer',
+        'tests',
+    ],
+]);
 
 set('wordpress_installed', function () {
-    return testWP('core is-installed');
+    return wpTest('core is-installed');
 });
 
-set('woocommerce_installed', function () {
-    return testWP('plugin is-active woocommerce');
+set('wordpress_installed_plugins', function () {
+    return wpGetPluginsList();
 });
 
-function runWP($command)
+set('wordpress_active_plugins', []);
+
+// Functions
+function wp($command)
 {
     cd('{{release_or_current_path}}');
 
-    return run('WP_CLI_PHP="{{bin/php}}" "{{bin/wp}}" '. $command);
+    return run('{{bin/wp}} '. $command);
 }
 
-function testWP($command)
+function wpTest($command)
 {
     cd('{{release_or_current_path}}');
 
-    return test('WP_CLI_PHP="{{bin/php}}" "{{bin/wp}}" '. $command);
+    return test('{{bin/wp}} '. $command);
+}
+
+function wpGetPluginsList()
+{
+    $list = \json_decode(
+        wp('plugin list --json'),
+        \JSON_OBJECT_AS_ARRAY
+    );
+
+    $plugins = [];
+    foreach ($list as $plugin) {
+        $plugins[$plugin['name']] = $plugin;
+    }
+
+    return $plugins;
+}
+
+function wpGetPluginStatus($plugin, $refresh = false)
+{
+    $plugins = $refresh ? wpGetPluginsList() : get('{{wordpress_installed_plugins}}');
+
+    return $plugins[$plugin]['status'] ?? 'not-installed';
+}
+
+function wpIsPluginActive($plugin, $refresh = false)
+{
+    return 'active' === wpGetPluginStatus($plugin);
 }
 
 // Tasks
@@ -64,18 +104,9 @@ task('badrock:checkout', function () {
     runLocally('git --work-tree="{{build_path}}" checkout -f {{target}}');
 })->once();
 
-desc('Upload code to remote server');
-task('badrock:rsync', function () {
-    invoke('rsync');
-});
-
-task('deploy:update_code', function () {
-    invoke('badrock:rsync');
-});
-
 desc('WordPress: download core');
 task('badrock:wordpress', function () {
-    runWP('core download');
+    wp('core download');
 });
 
 desc('WordPress: install languages');
@@ -85,13 +116,13 @@ task('badrock:languages', function () {
         return;
     }
 
-    runWP('language core install');
-    runWP('language plugin install --all');
-    runWP('language theme install --all');
+    wp('language core install');
+    wp('language plugin install --all');
+    wp('language theme install --all');
 });
 
 desc('WordPress: activate/deactivate plugins');
-task('badrock:active-plugins', function () {
+task('badrock:activate-plugins', function () {
     if (!get('wordpress_installed')) {
         warning('Skip: WordPress is not installed.');
         return;
@@ -104,9 +135,9 @@ task('badrock:active-plugins', function () {
 
     foreach ($plugins as $plugin => $active) {
         if ($active) {
-            runWP('plugin activate '. $plugin);
+            wp('plugin activate '. $plugin);
         } else {
-            runWP('plugin deactivate '. $plugin);
+            wp('plugin deactivate '. $plugin);
         }
     }
 });
@@ -118,10 +149,10 @@ task('badrock:migrate-db', function () {
         return;
     }
 
-    runWP('core update-db');
+    wp('core update-db');
 
-    if (get('woocommerce_installed')) {
-        runWP('wc update');
+    if (wpIsPluginActive('woocommerce')) {
+        wp('wc update');
     }
 });
 
@@ -148,7 +179,7 @@ task('badrock:clear-cache', function () {
         return;
     }
 
-    runWP('cache flush');
+    wp('cache flush');
 });
 
 task('badrock:build', [
@@ -159,7 +190,7 @@ task('badrock:deploy', [
     'badrock:secrets',
     'badrock:dump-dotenv',
     'badrock:wordpress',
-    'badrock:active-plugins',
+    'badrock:activate-plugins',
     'badrock:migrate-db',
     'badrock:languages',
     'badrock:clear-cache',
@@ -171,7 +202,7 @@ task('deploy', [
     'deploy:setup',
     'deploy:lock',
     'deploy:release',
-    'deploy:update_code',
+    'rsync',
     'deploy:shared',
     'deploy:vendors',
     'badrock:deploy',

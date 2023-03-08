@@ -2,7 +2,7 @@
 
 namespace Deployer;
 
-require __DIR__.'/config/deployer.php';
+require __DIR__.'/deployer/recipe.php';
 
 host('production')
     ->set('hostname', 'production')
