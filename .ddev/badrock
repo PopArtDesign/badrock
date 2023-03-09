@@ -60,12 +60,12 @@ badrock_ddev_config() {
         --disable-settings-management \
         --docroot='public' \
         --create-docroot \
-        --upload-dir='uploads'
+        --upload-dir='wp-content/uploads'
 }
 
 badrock_wordpress_install() {
-    ddev exec wp-cli core download && \
-        ddev exec wp-cli core install \
+    ddev exec vendor/bin/wp core download && \
+        ddev exec vendor/bin/wp core install \
             --url='"${DDEV_PRIMARY_URL}"' \
             --title='"${DDEV_PROJECT}"' \
             --admin_user="${BADROCK_ADMIN_USER:-admin}" \
@@ -74,14 +74,14 @@ badrock_wordpress_install() {
 }
 
 badrock_wordpress_config() {
-    ddev wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
+    ddev exec vendor/bin/wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
 
-    ddev wp language core install && \
-        ddev wp language plugin install && \
-        ddev wp language theme install || return 1
+    ddev exec vendor/bin/wp language core install && \
+        ddev exec vendor/bin/wp language plugin install && \
+        ddev exec vendor/bin/wp language theme install || return 1
 
     if [[ -n "${BADROCK_LANGUAGE}" ]]; then
-        ddev wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
+        ddev exec vendor/bin/wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
     fi
 }
 
