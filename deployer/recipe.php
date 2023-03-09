@@ -49,7 +49,7 @@ set('wordpress_installed', function () {
 });
 
 set('wordpress_installed_plugins', function () {
-    return wpGetPluginsList();
+    return wpFetchPluginsList();
 });
 
 set('wordpress_active_plugins', []);
@@ -69,7 +69,7 @@ function wpTest($command)
     return test('{{bin/wp}} '. $command);
 }
 
-function wpGetPluginsList()
+function wpFetchPluginsList()
 {
     $list = \json_decode(
         wp('plugin list --json'),
@@ -84,16 +84,30 @@ function wpGetPluginsList()
     return $plugins;
 }
 
+function wpRefreshPluginsList()
+{
+    set('wordpress_installed_plugins', wpFetchPluginsList());
+}
+
+function wpGetPluginsList($refresh = false)
+{
+    if ($refresh) {
+        wpRefreshPluginsList();
+    }
+
+    return get('wordpress_installed_plugins');
+}
+
 function wpGetPluginStatus($plugin, $refresh = false)
 {
-    $plugins = $refresh ? wpGetPluginsList() : get('wordpress_installed_plugins');
+    $plugins = wpGetPluginsList($refresh);
 
     return $plugins[$plugin]['status'] ?? 'not-installed';
 }
 
 function wpIsPluginActive($plugin, $refresh = false)
 {
-    return 'active' === wpGetPluginStatus($plugin);
+    return 'active' === wpGetPluginStatus($plugin, $refresh);
 }
 
 // Tasks
@@ -169,7 +183,7 @@ task('badrock:secrets', function () {
 
 desc('Dump .env files to .env.local.php');
 task('badrock:dump-dotenv', function () {
-    run('"{{bin/php}}" "{{tools_path}}/dotenv-dump.php" {{environment}}');
+    run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
 });
 
 desc('WordPress: clear cache');
