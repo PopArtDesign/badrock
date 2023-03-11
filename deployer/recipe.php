@@ -29,6 +29,8 @@ set('secrets_path', '{{build_path}}/config/secrets');
 
 set('tools_path', '{{release_or_current_path}}/tools');
 
+set('database_backup', '{{release_or_current_path}}/var/backup-' . date('c') . '.sql');
+
 set('rsync_src', '{{build_path}}');
 add('rsync', [
     'exclude' => [
@@ -156,8 +158,22 @@ task('badrock:activate-plugins', function () {
     }
 });
 
+desc('WordPress: backup database');
+task('badrock:db:backup', function () {
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+        return;
+    }
+
+    if (!get('database_backup')) {
+        return;
+    }
+
+    wp('db export {{database_backup}}');
+});
+
 desc('WordPress: migrate database');
-task('badrock:migrate-db', function () {
+task('badrock:db:migrate', function () {
     if (!get('wordpress_installed')) {
         warning('Skip: WordPress is not installed.');
         return;
@@ -205,7 +221,8 @@ task('badrock:deploy', [
     'badrock:dump-dotenv',
     'badrock:wordpress',
     'badrock:activate-plugins',
-    'badrock:migrate-db',
+    'badrock:db:backup',
+    'badrock:db:migrate',
     'badrock:languages',
     'badrock:clear-cache',
 ]);
