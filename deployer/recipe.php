@@ -121,12 +121,12 @@ task('badrock:checkout', function () {
 })->once();
 
 desc('WordPress: download core');
-task('badrock:wordpress', function () {
+task('badrock:core:download', function () {
     wp('core download');
 });
 
 desc('WordPress: install languages');
-task('badrock:languages', function () {
+task('badrock:language:install', function () {
     if (!get('wordpress_installed')) {
         warning('Skip: WordPress is not installed.');
         return;
@@ -138,7 +138,7 @@ task('badrock:languages', function () {
 });
 
 desc('WordPress: activate/deactivate plugins');
-task('badrock:activate-plugins', function () {
+task('badrock:plugin:activate', function () {
     if (!get('wordpress_installed')) {
         warning('Skip: WordPress is not installed.');
         return;
@@ -198,12 +198,12 @@ task('badrock:secrets', function () {
 });
 
 desc('Dump .env files to .env.local.php');
-task('badrock:dump-dotenv', function () {
+task('badrock:dotenv:dump', function () {
     run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
 });
 
 desc('WordPress: clear cache');
-task('badrock:clear-cache', function () {
+task('badrock:cache:clear', function () {
     if (!get('wordpress_installed')) {
         warning('Skip: WordPress is not installed.');
         return;
@@ -218,13 +218,13 @@ task('badrock:build', [
 
 task('badrock:deploy', [
     'badrock:secrets',
-    'badrock:dump-dotenv',
-    'badrock:wordpress',
-    'badrock:activate-plugins',
+    'badrock:dotenv:dump',
+    'badrock:core:download',
+    'badrock:plugin:activate',
     'badrock:db:backup',
     'badrock:db:migrate',
-    'badrock:languages',
-    'badrock:clear-cache',
+    'badrock:language:install',
+    'badrock:cache:clear',
 ]);
 
 task('deploy', [
