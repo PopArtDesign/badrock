@@ -212,6 +212,26 @@ task('badrock:cache:clear', function () {
     wp('cache flush');
 });
 
+desc('WordPress: activate maintenance mode');
+task('maintenance:on', function () {
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+        return;
+    }
+
+    wp('maintenance-mode activate');
+});
+
+desc('WordPress: deactivate maintenance mode');
+task('maintenance:off', function () {
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+        return;
+    }
+
+    wp('maintenance-mode deactivate');
+});
+
 task('badrock:build', [
     'badrock:checkout',
 ]);
