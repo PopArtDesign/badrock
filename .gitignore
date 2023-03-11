@@ -1,7 +1,10 @@
 # Application
-/public/*
-!/public/wp-content
-/public/wp-content/*
+/public/wp-*/
+/public/wp-*.php
+/public/index.php
+/public/xmlrpc.php
+/public/readme.html
+/public/license.txt
 !/public/wp-content/mu-plugins/
 /public/wp-content/mu-plugins/*/
 !/public/wp-content/plugins/
