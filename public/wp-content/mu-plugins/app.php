@@ -24,6 +24,7 @@ defined('ABSPATH') || exit;
  * @see https://github.com/symfony/error-handler
  */
 if (class_exists(Debug::class) && WP_DEBUG && WP_DEBUG_DISPLAY) {
+    define('QM_DISABLE_ERROR_HANDLER', true);
     Debug::enable();
 }
 
