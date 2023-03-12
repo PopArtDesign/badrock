@@ -14,19 +14,8 @@ use Inpsyde\Wonolog;
 use Monolog\Handler\FingersCrossedHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Symfony\Component\ErrorHandler\Debug;
 
 defined('ABSPATH') || exit;
-
-/**
- * Bootstrap Symfony ErrorHandler
- *
- * @see https://github.com/symfony/error-handler
- */
-if (class_exists(Debug::class) && WP_DEBUG && WP_DEBUG_DISPLAY) {
-    define('QM_DISABLE_ERROR_HANDLER', true);
-    Debug::enable();
-}
 
 /**
  * Bootstrap Wonolog

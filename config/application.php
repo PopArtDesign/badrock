@@ -11,6 +11,7 @@
 use function Env\env;
 use Roots\WPConfig\Config;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
@@ -156,6 +157,19 @@ if (file_exists($env_config)) {
 }
 
 Config::apply();
+
+/**
+ * Bootstrap Symfony ErrorHandler
+ *
+ * @see https://github.com/symfony/error-handler
+ */
+if (class_exists(Debug::class)
+    && defined('WP_DEBUG') && WP_DEBUG
+    && defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY
+) {
+    define('QM_DISABLE_ERROR_HANDLER', true);
+    Debug::enable();
+}
 
 /**
  * Bootstrap WordPress
