@@ -24,7 +24,7 @@ defined('ABSPATH') || exit;
  */
 if (defined('LOG_STREAM')) {
     $logHandler = new StreamHandler(LOG_STREAM, Logger::DEBUG);
-    if (WP_ENV === 'production') {
+    if ('production' === wp_get_environment_type()) {
         $logHadler = new FingersCrossedHandler($logHandler, Logger::ERROR);
     }
 
