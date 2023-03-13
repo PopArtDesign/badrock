@@ -63,6 +63,7 @@ if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'd
 /**
  * Debugging Settings
  */
+Config::define('WP_DEBUG', env('WP_DEBUG') ?: false);
 Config::define('WP_DEBUG_DISPLAY', false);
 Config::define('SCRIPT_DEBUG', false);
 ini_set('display_errors', '0');
