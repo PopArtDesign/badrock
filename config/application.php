@@ -61,6 +61,13 @@ if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'd
 }
 
 /**
+ * Debugging Settings
+ */
+Config::define('WP_DEBUG_DISPLAY', false);
+Config::define('SCRIPT_DEBUG', false);
+ini_set('display_errors', '0');
+
+/**
  * URLs
  */
 Config::define('WP_HOME', env('WP_HOME'));
@@ -114,13 +121,6 @@ Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? 5);
 Config::define('FS_METHOD', 'direct');
-
-/**
- * Debugging Settings
- */
-Config::define('WP_DEBUG_DISPLAY', false);
-Config::define('SCRIPT_DEBUG', false);
-ini_set('display_errors', '0');
 
 /**
  * Logging Settings
