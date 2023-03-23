@@ -5,6 +5,8 @@
 /public/xmlrpc.php
 /public/readme.html
 /public/license.txt
+!/public/wp-content/
+/public/wp-content/*
 !/public/wp-content/mu-plugins/
 /public/wp-content/mu-plugins/*/
 !/public/wp-content/plugins/
