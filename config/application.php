@@ -111,6 +111,16 @@ Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
 Config::define('NONCE_SALT', env('NONCE_SALT'));
 
 /**
+ * Logging Settings
+ */
+$log_dir = $root_dir . '/var/log';
+// It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
+Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
+Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
+// WooCommerce
+Config::define('WC_LOG_DIR', $log_dir . '/');
+
+/**
  * Custom Settings
  */
 Config::define('AUTOMATIC_UPDATER_DISABLED', true);
@@ -122,16 +132,6 @@ Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? 5);
 Config::define('FS_METHOD', 'direct');
-
-/**
- * Logging Settings
- */
-$log_dir = $root_dir . '/var/log';
-// It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
-Config::define('LOG_STREAM', env('LOG_STREAM') ?? sprintf('%s/%s.log', $log_dir, WP_ENV));
-Config::define('WP_DEBUG_LOG', env('WP_DEBUG_LOG') ?? sprintf('%s/wordress_%s.log', $log_dir, WP_ENV));
-// WooCommerce
-Config::define('WC_LOG_DIR', $log_dir . '/');
 
 // https://github.com/roots/soil#modules
 Config::define('SOIL', [
