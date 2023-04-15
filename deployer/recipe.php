@@ -212,6 +212,16 @@ task('badrock:cache:clear', function () {
     wp('cache flush');
 });
 
+desc('WordPress: flush rewrite rules');
+task('badrock:rewrite:flush', function () {
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+        return;
+    }
+
+    wp('rewrite flush');
+});
+
 desc('WordPress: activate maintenance mode');
 task('maintenance:on', function () {
     if (!get('wordpress_installed')) {
@@ -244,6 +254,7 @@ task('badrock:deploy', [
     'badrock:db:backup',
     'badrock:db:migrate',
     'badrock:language:install',
+    'badrock:rewrite:flush',
     'badrock:cache:clear',
 ]);
 
