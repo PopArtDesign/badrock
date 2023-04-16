@@ -4,6 +4,7 @@ namespace Deployer;
 
 require 'recipe/common.php';
 require 'contrib/rsync.php';
+require 'contrib/crontab.php';
 require __DIR__.'/wp-cli.php';
 
 add('recipes', ['badrock']);
@@ -21,6 +22,10 @@ add('writable_dirs', [
     'public/wp-content/uploads',
     'var',
     'var/log',
+]);
+
+add('crontab:jobs', [
+    '* * * * * cd {{current_path}} && {{bin/wp}} cron event run --due-now >/dev/null 2>&1',
 ]);
 
 set('build_path', dirname(__DIR__) . '/var/build');
@@ -257,6 +262,8 @@ task('badrock:deploy', [
     'badrock:rewrite:flush',
     'badrock:cache:clear',
 ]);
+
+after('deploy:success', 'crontab:sync');
 
 task('deploy', [
     'deploy:info',
