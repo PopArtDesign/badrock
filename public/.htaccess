@@ -9,4 +9,20 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.php [L]
 
+<Files xmlrpc.php>
+  deny from all
+</Files>
+
+<If "%{REQUEST_URI} =~ m#^/wp-content/cache/#">
+    <IfModule mod_expires.c>
+        ExpiresActive On
+        ExpiresDefault "access plus 1 year"
+    </IfModule>
+    <IfModule mod_headers.c>
+        FileETag None
+        Header unset ETag
+        Header set Cache-Control "max-age=31622400, public"
+    </IfModule>
+</If>
+
 # END WordPress
