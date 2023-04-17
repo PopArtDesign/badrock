@@ -132,6 +132,7 @@ Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? 5);
 Config::define('FS_METHOD', 'direct');
+Config::define('WP_CACHE', true);
 
 // https://github.com/roots/soil#modules
 Config::define('SOIL', [
