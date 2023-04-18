@@ -24,8 +24,16 @@ add('writable_dirs', [
     'var/log',
 ]);
 
+set('bin/wp-cron', function () {
+    return str_replace(
+        get('release_or_current_path'),
+        get('current_path'),
+        parse('{{bin/wp}} cron event run --due-now >/dev/null 2>&1'),
+    );
+});
+
 add('crontab:jobs', [
-    '* * * * * cd {{current_path}} && {{bin/wp}} cron event run --due-now >/dev/null 2>&1',
+    '* * * * * cd {{current_path}} && {{bin/wp-cron}}',
 ]);
 
 set('build_path', dirname(__DIR__) . '/var/build');
