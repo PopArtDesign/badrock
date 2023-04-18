@@ -247,6 +247,11 @@ task('maintenance:off', function () {
     wp('maintenance-mode deactivate');
 });
 
+desc('Create "public_html" symlink');
+task('badrock:public_html', function () {
+    run('cd {{deploy_path}} && {{bin/symlink}} {{current_path}}/public {{deploy_path}}/public_html');
+});
+
 task('badrock:build', [
     'badrock:checkout',
 ]);
@@ -262,6 +267,8 @@ task('badrock:deploy', [
     'badrock:rewrite:flush',
     'badrock:cache:clear',
 ]);
+
+after('deploy:symlink', 'badrock:public_html');
 
 after('deploy:success', 'crontab:sync');
 
