@@ -1,26 +1,51 @@
 # BEGIN WordPress
 # https://wordpress.org/documentation/article/htaccess/
 
-RewriteEngine On
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-RewriteBase /
-RewriteRule ^index\.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.php [L]
+#
+# Routing
+#
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteBase /
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
 
+#
+# Security
+#
 <Files xmlrpc.php>
-  deny from all
+    deny from all
 </Files>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
 
+    # Block the include-only files
+    # https://wordpress.org/documentation/article/hardening-wordpress/#securing-wp-includes
+    RewriteBase /
+    RewriteRule ^wp-admin/includes/ - [F,L]
+    RewriteRule !^wp-includes/ - [S=3]
+    RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]
+    RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]
+    RewriteRule ^wp-includes/theme-compat/ - [F,L]
+
+    # Forbid php files execution in uploads folder
+    RewriteBase /
+    RewriteRule ^wp-content/uploads/.*\.php$ - [F,L]
+</IfModule>
+
+#
+# Caching
+#
 <If "%{REQUEST_URI} =~ m#^/wp-content/cache/#">
     <IfModule mod_expires.c>
         ExpiresActive On
         ExpiresDefault "access plus 1 year"
     </IfModule>
     <IfModule mod_headers.c>
-        FileETag None
-        Header unset ETag
         Header set Cache-Control "max-age=31622400, public"
     </IfModule>
 </If>
