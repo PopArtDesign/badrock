@@ -3,8 +3,8 @@
  * Plugin Name: App
  * Plugin URI:  https://github.com/PopArtDesign/badrock
  * Description: App Plugin
- * Author:      Oleg Voronkovich <oleg-voronkovich@yandex.ru>
- * Author URI:  https://github.com/voronkovich
+ * Author:      PopArtDesign <info@popartdesign.ru>
+ * Author URI:  https://popartdesign.ru
  * License:     MIT License
  */
 
