@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Description: Deploy project
+## Usage: deploy [options] [--] [<selector>...]
+## Example: ddev deploy prod
+
+dep deploy "$@"
