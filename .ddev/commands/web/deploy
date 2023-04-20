@@ -4,4 +4,15 @@
 ## Usage: deploy [options] [--] [<selector>...]
 ## Example: ddev deploy prod
 
+which 'dep' &>/dev/null || {
+    echo '
+Deployer is not installed: https://deployer.org/
+
+To install Deployer, run next command in your project dir:
+
+  ddev composer require --dev deployer/deployer
+'
+    exit 1
+} >&2
+
 dep deploy "$@"
