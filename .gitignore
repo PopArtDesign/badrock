@@ -35,3 +35,4 @@
 # Tools
 /tools/*
 !/tools/dotenv-dump.php
+!/tools/generate.php
