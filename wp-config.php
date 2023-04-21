@@ -176,6 +176,7 @@ if ('development' === WP_ENV) {
     Config::define('SCRIPT_DEBUG', true);
     Config::define('DISALLOW_INDEXING', true);
     Config::define('DISABLE_WP_CRON', false);
+    Config::define('WP_CACHE', false);
 
     ini_set('display_errors', '1');
 
