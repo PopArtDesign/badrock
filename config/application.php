@@ -6,6 +6,8 @@
  * A good default policy is to deviate from the production config as little as
  * possible. Try to define as much of your configuration in this file as you
  * can.
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/
  */
 
 use function Env\env;
@@ -15,7 +17,8 @@ use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
- * See https://codex.wordpress.org/Function_Reference/is_ssl#Notes
+ *
+ * @see https://codex.wordpress.org/Function_Reference/is_ssl#Notes
  */
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
     $_SERVER['HTTPS'] = 'on';
@@ -49,12 +52,13 @@ if (file_exists($root_dir . '/.env.local.php') || file_exists($root_dir . '/.env
 
 /**
  * Set up our global environment constant and load its config first
- * Default: production
  */
 define('WP_ENV', env('WP_ENV') ?: 'production');
 
 /**
  * Infer WP_ENVIRONMENT_TYPE based on WP_ENV
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/#wp-environment-type
  */
 if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'development'])) {
     Config::define('WP_ENVIRONMENT_TYPE', WP_ENV);
@@ -62,6 +66,8 @@ if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'd
 
 /**
  * Debugging Settings
+ *
+ * @see https://wordpress.org/documentation/article/debugging-in-wordpress/
  */
 Config::define('WP_DEBUG', env('WP_DEBUG') ?: false);
 Config::define('WP_DEBUG_DISPLAY', false);
@@ -70,12 +76,16 @@ ini_set('display_errors', '0');
 
 /**
  * URLs
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/#wp-siteurl
  */
 Config::define('WP_HOME', env('WP_HOME'));
 Config::define('WP_SITEURL', env('WP_SITEURL') ?? Config::get('WP_HOME'));
 
 /**
  * DB settings
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/#configure-database-settings
  */
 if (env('DB_SSL')) {
     Config::define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
@@ -100,6 +110,13 @@ if (env('DATABASE_URL')) {
 
 /**
  * Authentication Unique Keys and Salts
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/#security-keys
+ *
+ * Generate your keys here: https://roots.io/salts.html
+ * or run:
+ *
+ * php tools/generate.php salt
  */
 Config::define('AUTH_KEY', env('AUTH_KEY'));
 Config::define('SECURE_AUTH_KEY', env('SECURE_AUTH_KEY'));
@@ -112,6 +129,8 @@ Config::define('NONCE_SALT', env('NONCE_SALT'));
 
 /**
  * Logging Settings
+ *
+ * @see https://developer.wordpress.org/apis/wp-config-php/#configure-error-logging
  */
 $log_dir = $root_dir . '/var/log';
 // It is possible to use PHP streams e.g. 'php://stderr', 'php://stdout'
