@@ -150,6 +150,7 @@ Config::define('DISALLOW_FILE_MODS', true);
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? 5);
 Config::define('FS_METHOD', 'direct');
 Config::define('WP_CACHE', true);
+Config::define('WP_DEFAULT_THEME', 'app');
 
 // https://github.com/roots/soil#modules
 Config::define('SOIL', [

@@ -7,7 +7,6 @@
  * Examples:
  *
  * Config::define('WPLANG', env('WPLANG') ?? 'ru_RU');
- * Config::define('WP_DEFAULT_THEME', 'app');
  */
 
 use Roots\WPConfig\Config;

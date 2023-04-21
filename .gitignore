@@ -14,7 +14,7 @@
 !/public/wp-content/plugins/.gitkeep
 !/public/wp-content/themes/
 /public/wp-content/themes/*
-!/public/wp-content/themes/.gitkeep
+!/public/wp-content/themes/app/
 !/public/wp-content/uploads/
 /public/wp-content/uploads/*
 !/public/wp-content/uploads/.gitkeep
