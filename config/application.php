@@ -1,18 +1,13 @@
 <?php
 /**
- * Your base production configuration goes in this file. Environment-specific
- * overrides go in their respective config/environments/{{WP_ENV}}.php file.
+ * Add you custom configuration here.
  *
- * A good default policy is to deviate from the production config as little as
- * possible. Try to define as much of your configuration in this file as you
- * can.
+ * @see https://developer.wordpress.org/apis/wp-config-php/
  *
  * Examples:
  *
  * Config::define('WPLANG', env('WPLANG') ?? 'ru_RU');
  * Config::define('WP_DEFAULT_THEME', 'app');
- *
- * @see https://developer.wordpress.org/apis/wp-config-php/
  */
 
 use Roots\WPConfig\Config;

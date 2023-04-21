@@ -169,13 +169,35 @@ Config::define('WP_UNHOOKED_CONFIG', [
     'disable-admin-dashboard-widget-primary' => true,
 ]);
 
-require_once $root_dir . '/config/application.php';
+if ('development' === WP_ENV) {
+    Config::define('SAVEQUERIES', true);
+    Config::define('WP_DEBUG_DISPLAY', true);
+    Config::define('WP_DISABLE_FATAL_ERROR_HANDLER', true);
+    Config::define('SCRIPT_DEBUG', true);
+    Config::define('DISALLOW_INDEXING', true);
+    Config::define('DISABLE_WP_CRON', false);
 
-$env_config = $root_dir . '/environments/' . WP_ENV . '.php';
+    ini_set('display_errors', '1');
 
-if (file_exists($env_config)) {
-    require_once $env_config;
+    // Enable plugin and theme updates and installation from the admin
+    Config::define('DISALLOW_FILE_MODS', false);
 }
+
+if ('staging' === WP_ENV) {
+    /**
+     * You should try to keep staging as close to production as possible. However,
+     * should you need to, you can always override production configuration values
+     * with `Config::define`.
+     */
+
+    Config::define('DISALLOW_INDEXING', true);
+}
+
+if ('production' === WP_ENV) {
+    Config::define('LOG_STREAM', env('LOG_STREAM') ?? 'php://stderr');
+}
+
+require_once $root_dir . '/config/application.php';
 
 Config::apply();
 
