@@ -15,4 +15,4 @@ To install Deployer, run next command in your project dir:
     exit 1
 } >&2
 
-dep deploy "$@"
+dep deploy "${@:-production}"
