@@ -24,16 +24,24 @@ add('writable_dirs', [
     'var/log',
 ]);
 
-set('bin/wp-cron', function () {
+set('bin/cronjob_wp', function () {
     return str_replace(
         get('release_or_current_path'),
         get('current_path'),
-        parse('{{bin/wp}} cron event run --due-now >/dev/null 2>&1'),
+        parse('{{bin/wp}} cron event run --due-now'),
     );
 });
 
+set('bin/cronjob_wget', function () {
+    return parse('wget --no-check-certificate -O - {{wordpress_siteurl}}/wp-cron.php?doing_wp_cron');
+});
+
+set('bin/cronjob', '{{bin/cronjob_wp}}');
+
+set('cronjob_interval', '* * * * *');
+
 add('crontab:jobs', [
-    '* * * * * cd {{current_path}} && {{bin/wp-cron}}',
+    '{{cronjob_interval}} cd {{current_path}} && {{bin/cronjob}} &>/dev/null',
 ]);
 
 set('build_path', dirname(__DIR__) . '/var/build');
