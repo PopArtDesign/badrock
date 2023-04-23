@@ -33,3 +33,131 @@ set('bin/wp', function () {
     run('mv {{deploy_path}}/wp-cli.phar {{deploy_path}}/.dep/wp-cli.phar');
     return '{{bin/php}} {{deploy_path}}/.dep/wp-cli.phar';
 });
+
+set('wordpress_installed', function () {
+    return wpTest('core is-installed');
+});
+
+set('wordpress_plugins', function () {
+    return wpFetchPluginsList();
+});
+
+set('wordpress_constants', function () {
+    return wpFetchConstants();
+});
+
+set('wordpress_siteurl', function () {
+    return get('wordpress_constants')['WP_SITEURL'] ?? null;
+});
+
+/**
+ * Runs wp-cli subcommand.
+ *
+ * @param string $command Subcommand with all arguments
+ *
+ * @return string
+ */
+function wp($command)
+{
+    cd('{{release_or_current_path}}');
+
+    return run('{{bin/wp}} '. $command);
+}
+
+/**
+ * Returns wp-cli subcommand status.
+ *
+ * @param string $command Subcommand with all arguments
+ *
+ * @return bool
+ */
+function wpTest($command)
+{
+    cd('{{release_or_current_path}}');
+
+    return test('{{bin/wp}} '. $command);
+}
+
+/**
+ * Returns all defined constants.
+ *
+ * @return array
+ */
+function wpFetchConstants()
+{
+    $eval = '$c = get_defined_constants(true); echo json_encode($c["user"] ?? []);';
+
+    return \json_decode(
+        wp(\sprintf("eval '%s'", $eval)),
+        \JSON_OBJECT_AS_ARRAY,
+    );
+}
+
+/**
+ * Returns WordPress plugins list.
+ *
+ * @return array
+ */
+function wpFetchPluginsList()
+{
+    $list = \json_decode(wp('plugin list --json'), \JSON_OBJECT_AS_ARRAY);
+
+    $plugins = [];
+    foreach ($list as $plugin) {
+        $plugins[$plugin['name']] = $plugin;
+    }
+
+    return $plugins;
+}
+
+/**
+ * Refreshs WordPress plugins list.
+ */
+function wpRefreshPluginsList()
+{
+    set('wordpress_plugins', wpFetchPluginsList());
+}
+
+/**
+ * Returns installed WordPress plugins.
+ *
+ * @param bool $refresh (optional) Refresh plugin list
+ *
+ * @return array
+ */
+function wpGetPluginsList($refresh = false)
+{
+    if ($refresh || !has('wordpress_plugins')) {
+        wpRefreshPluginsList();
+    }
+
+    return get('wordpress_plugins');
+}
+
+/**
+ * Returns WordPress plugin status.
+ *
+ * @param string $plugin  Plugin name
+ * @param bool   $refresh Refresh plugin list
+ *
+ * @return string Plugin status (e.g. 'active', 'not-installed')
+ */
+function wpGetPluginStatus($plugin, $refresh = false)
+{
+    $plugins = wpGetPluginsList($refresh);
+
+    return $plugins[$plugin]['status'] ?? 'not-installed';
+}
+
+/**
+ * Checks whether plugin is acvive.
+ *
+ * @param string $plugin  Plugin name (e.g. 'woocommerce')
+ * @param bool   $refresh Refresh plugins list
+ *
+ * @return bool
+ */
+function wpIsPluginActive($plugin, $refresh = false)
+{
+    return 'active' === wpGetPluginStatus($plugin, $refresh);
+}

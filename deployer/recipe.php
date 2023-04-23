@@ -12,10 +12,6 @@ add('recipes', ['badrock']);
 // Config
 set('environment', 'production');
 
-set('site_url', function () {
-    return wpConst('WP_SITEURL');
-});
-
 add('shared_dirs', [
     'public/wp-content/uploads',
     'var/log',
@@ -63,76 +59,7 @@ add('rsync', [
     ],
 ]);
 
-set('wordpress_installed', function () {
-    return wpTest('core is-installed');
-});
-
-set('wordpress_installed_plugins', function () {
-    return wpFetchPluginsList();
-});
-
 set('wordpress_active_plugins', []);
-
-// Functions
-function wp($command)
-{
-    cd('{{release_or_current_path}}');
-
-    return run('{{bin/wp}} '. $command);
-}
-
-function wpTest($command)
-{
-    cd('{{release_or_current_path}}');
-
-    return test('{{bin/wp}} '. $command);
-}
-
-function wpConst($const)
-{
-    return wp(sprintf('eval "echo %s;"', $const));
-}
-
-function wpFetchPluginsList()
-{
-    $list = \json_decode(
-        wp('plugin list --json'),
-        \JSON_OBJECT_AS_ARRAY
-    );
-
-    $plugins = [];
-    foreach ($list as $plugin) {
-        $plugins[$plugin['name']] = $plugin;
-    }
-
-    return $plugins;
-}
-
-function wpRefreshPluginsList()
-{
-    set('wordpress_installed_plugins', wpFetchPluginsList());
-}
-
-function wpGetPluginsList($refresh = false)
-{
-    if ($refresh) {
-        wpRefreshPluginsList();
-    }
-
-    return get('wordpress_installed_plugins');
-}
-
-function wpGetPluginStatus($plugin, $refresh = false)
-{
-    $plugins = wpGetPluginsList($refresh);
-
-    return $plugins[$plugin]['status'] ?? 'not-installed';
-}
-
-function wpIsPluginActive($plugin, $refresh = false)
-{
-    return 'active' === wpGetPluginStatus($plugin, $refresh);
-}
 
 // Tasks
 desc('Checkout repo');
@@ -288,7 +215,7 @@ task('badrock:deploy', [
 after('deploy:symlink', 'badrock:public_html');
 
 task('deploy:success', function () {
-    info("Successfully deployed!\n\n{{site_url}}");
+    info("Successfully deployed!\n\n{{wordpress_siteurl}}");
 });
 
 task('deploy', [
