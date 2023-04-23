@@ -12,6 +12,10 @@ add('recipes', ['badrock']);
 // Config
 set('environment', 'production');
 
+set('site_url', function () {
+    return wpConst('WP_SITEURL');
+});
+
 add('shared_dirs', [
     'public/wp-content/uploads',
     'var/log',
@@ -82,6 +86,11 @@ function wpTest($command)
     cd('{{release_or_current_path}}');
 
     return test('{{bin/wp}} '. $command);
+}
+
+function wpConst($const)
+{
+    return wp(sprintf('eval "echo %s;"', $const));
 }
 
 function wpFetchPluginsList()
@@ -278,7 +287,9 @@ task('badrock:deploy', [
 
 after('deploy:symlink', 'badrock:public_html');
 
-after('deploy:success', 'crontab:sync');
+task('deploy:success', function () {
+    info("Successfully deployed!\n\n{{site_url}}");
+});
 
 task('deploy', [
     'deploy:info',
@@ -291,5 +302,6 @@ task('deploy', [
     'deploy:vendors',
     'badrock:deploy',
     'deploy:writable',
+    'crontab:sync',
     'deploy:publish',
 ]);
