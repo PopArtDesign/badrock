@@ -5,7 +5,7 @@
 ## Example: ddev php-cs-fixer fix src
 
 [[ -f 'tools/php-cs-fixer' ]] || {
-    phive install --copy --trust-gpg-keys 'deployphp/php-cs-fixer'
+    phive install --copy --trust-gpg-keys E82B2FB314E9906E 'php-cs-fixer'
 }
 
 PHP_CS_FIXER_IGNORE_ENV=true tools/php-cs-fixer "$@"
