@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Run deployer (https://deployer.org/)
+## Usage: deployer <command> [option...]
+## Example: ddev deployer init
+
+[[ -f 'tools/deployer' ]] || {
+    phive install --copy --force-accept-unsigned 'deployphp/deployer'
+}
+
+tools/deployer "$@"

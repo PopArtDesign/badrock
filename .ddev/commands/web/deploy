@@ -1,18 +1,11 @@
 #!/bin/bash
 
-## Description: Deploy project
-## Usage: deploy [options] [--] [<selector>...]
-## Example: ddev deploy prod
+## Description: Deploy project (to "production" by default)
+## Usage: deploy [option...] [<selector>...]
+## Example: ddev deploy staging
 
-which 'dep' &>/dev/null || {
-    echo '
-Deployer is not installed: https://deployer.org/
+[[ -f 'tools/deployer' ]] || {
+    phive install --copy --force-accept-unsigned 'deployphp/deployer'
+}
 
-To install Deployer, run next command in your project dir:
-
-  ddev composer require --dev deployer/deployer
-'
-    exit 1
-} >&2
-
-dep deploy "${@:-production}"
+tools/deployer deploy "${@:-production}"
