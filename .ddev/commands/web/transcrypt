@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Description: Configure transparent encryption of sensitive files stored in a Git repository
+## Usage: transcrypt [option...]
+## Example: ddev transcrypt --display
+
+transcrypt "$@"
