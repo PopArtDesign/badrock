@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Run php-cs-fixer (https://cs.symfony.com)
+## Usage: php-cs-fixer <command> [option...]
+## Example: ddev php-cs-fixer fix src
+
+[[ -f 'tools/php-cs-fixer' ]] || {
+    phive install --copy --trust-gpg-keys 'deployphp/php-cs-fixer'
+}
+
+PHP_CS_FIXER_IGNORE_ENV=true tools/php-cs-fixer "$@"
