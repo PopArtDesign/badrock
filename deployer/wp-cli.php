@@ -34,22 +34,6 @@ set('bin/wp', function () {
     return '{{bin/php}} {{deploy_path}}/.dep/wp-cli.phar';
 });
 
-set('wordpress_installed', function () {
-    return wpTest('core is-installed');
-});
-
-set('wordpress_plugins', function () {
-    return wpFetchPluginsList();
-});
-
-set('wordpress_constants', function () {
-    return wpFetchConstants();
-});
-
-set('wordpress_siteurl', function () {
-    return get('wordpress_constants')['WP_SITEURL'] ?? null;
-});
-
 /**
  * Runs wp-cli subcommand.
  *
