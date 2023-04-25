@@ -4,11 +4,12 @@ $finder = PhpCsFixer\Finder::create()
     ->in([
         __DIR__.'/src',
         __DIR__.'/config',
+        __DIR__.'/deployer',
+        __DIR__.'/tools',
     ])
     ->append([
-        __DIR__.'/public/index.php',
-        __DIR__.'/public/mu-plugins/app.php',
-        __DIR__.'/public/wp-config.php',
+        __DIR__.'/wp-config.php',
+        __DIR__.'/public/wp-content/mu-plugins/app.php',
     ])
 ;
 
