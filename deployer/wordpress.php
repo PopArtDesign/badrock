@@ -40,6 +40,17 @@ set('wordpress_cron_interval', '*/5 * * * *');
 
 set('wordpress_cron_job', '{{wordpress_cron_interval}} cd {{current_path}} && {{bin/wordpress_cron}} &>/dev/null');
 
+function wordpressSkipIfNotInstalled()
+{
+    if (!get('wordpress_installed')) {
+        warning('Skip: WordPress is not installed.');
+
+        return true;
+    }
+
+    return false;
+}
+
 desc('WordPress: download core');
 task('wordpress:core:download', function () {
     wp('core download');
@@ -47,8 +58,7 @@ task('wordpress:core:download', function () {
 
 desc('WordPress: install languages');
 task('wordpress:language:install', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -59,8 +69,7 @@ task('wordpress:language:install', function () {
 
 desc('WordPress: migrate database');
 task('wordpress:db:migrate', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -73,8 +82,7 @@ task('wordpress:db:migrate', function () {
 
 desc('WordPress: activate/deactivate plugins');
 task('wordpress:plugin:activate', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -94,8 +102,7 @@ task('wordpress:plugin:activate', function () {
 
 desc('WordPress: activate maintenance mode');
 task('wordpress:maintenance:activate', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -104,8 +111,7 @@ task('wordpress:maintenance:activate', function () {
 
 desc('WordPress: deactivate maintenance mode');
 task('wordpress:maintenance:deactivate', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -114,8 +120,7 @@ task('wordpress:maintenance:deactivate', function () {
 
 desc('WordPress: flush cache');
 task('wordpress:cache:flush', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -124,8 +129,7 @@ task('wordpress:cache:flush', function () {
 
 desc('WordPress: flush rewrite rules');
 task('wordpress:rewrite:flush', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
