@@ -63,6 +63,22 @@ function wpTest($command)
 }
 
 /**
+ * Checks whether WordPress core installed.
+ *
+ * @param bool $refresh Refresh
+ *
+ * @return bool
+ */
+function wpIsCoreInstalled($refresh = false)
+{
+    if ($refresh || !has('wp_core_installed')) {
+        set('wp_core_installed', wpTest('core is-installed'));
+    }
+
+    return get('wp_core_installed');
+}
+
+/**
  * Returns all defined constants.
  *
  * @return array
@@ -99,7 +115,7 @@ function wpFetchPluginsList()
  */
 function wpRefreshPluginsList()
 {
-    set('wordpress_plugins', wpFetchPluginsList());
+    set('wp_plugins_list', wpFetchPluginsList());
 }
 
 /**
@@ -111,11 +127,11 @@ function wpRefreshPluginsList()
  */
 function wpGetPluginsList($refresh = false)
 {
-    if ($refresh || !has('wordpress_plugins')) {
+    if ($refresh || !has('wp_plugins_list')) {
         wpRefreshPluginsList();
     }
 
-    return get('wordpress_plugins');
+    return get('wp_plugins_list');
 }
 
 /**

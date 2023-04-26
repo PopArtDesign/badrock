@@ -4,14 +4,6 @@ namespace Deployer;
 
 require_once __DIR__.'/wp-cli.php';
 
-set('wordpress_installed', function () {
-    return wpTest('core is-installed');
-});
-
-set('wordpress_plugins', function () {
-    return get('wordpress_installed') ? wpFetchPluginsList() : [];
-});
-
 set('bin/wordpress_cron', function () {
     return str_replace(
         get('release_or_current_path'),
@@ -26,7 +18,7 @@ set('wordpress_cron_job', '{{wordpress_cron_interval}} cd {{current_path}} && {{
 
 function wordpressSkipIfNotInstalled()
 {
-    if (!get('wordpress_installed')) {
+    if (!wpIsCoreInstalled()) {
         info('Skip: WordPress is not installed.');
 
         return true;
