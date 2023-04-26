@@ -58,8 +58,14 @@ define('WP_ENV', env('WP_ENV') ?: 'production');
  *
  * @see https://developer.wordpress.org/apis/wp-config-php/#wp-environment-type
  */
-if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'development'])) {
-    Config::define('WP_ENVIRONMENT_TYPE', WP_ENV);
+if (env('WP_ENVIRONMENT_TYPE')) {
+    define('WP_ENVIRONMENT_TYPE', env('WP_ENVIRONMENT_TYPE'));
+} else {
+    if (in_array(WP_ENV, ['production', 'staging', 'development'])) {
+        define('WP_ENVIRONMENT_TYPE', WP_ENV);
+    } else {
+        define('WP_ENVIRONMENT_TYPE', 'production');
+    }
 }
 
 /**
@@ -169,7 +175,7 @@ Config::define('WP_UNHOOKED_CONFIG', [
     'disable-admin-dashboard-widget-primary' => true,
 ]);
 
-if ('development' === WP_ENV) {
+if ('development' === WP_ENVIRONMENT_TYPE) {
     Config::define('SAVEQUERIES', true);
     Config::define('WP_DEBUG_DISPLAY', true);
     Config::define('WP_DISABLE_FATAL_ERROR_HANDLER', true);
@@ -184,7 +190,7 @@ if ('development' === WP_ENV) {
     Config::define('DISALLOW_FILE_MODS', false);
 }
 
-if ('staging' === WP_ENV) {
+if ('staging' === WP_ENVIRONMENT_TYPE) {
     /**
      * You should try to keep staging as close to production as possible. However,
      * should you need to, you can always override production configuration values
@@ -194,7 +200,7 @@ if ('staging' === WP_ENV) {
     Config::define('DISALLOW_INDEXING', true);
 }
 
-if ('production' === WP_ENV) {
+if ('production' === WP_ENVIRONMENT_TYPE) {
     Config::define('LOG_STREAM', env('LOG_STREAM') ?? 'php://stderr');
 }
 
