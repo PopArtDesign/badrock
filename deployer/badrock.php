@@ -10,7 +10,6 @@ require_once __DIR__.'/wordpress.php';
 
 add('recipes', ['badrock']);
 
-// Config
 set('environment', 'production');
 
 add('shared_dirs', [
@@ -49,22 +48,22 @@ add('rsync', [
 
 set('database_backup', '{{release_or_current_path}}/var/backup-' . date('c') . '.sql');
 
+set('public_symlink', 'public_html');
+
 add('crontab:jobs', [
     '{{wordpress_cron_job}}',
 ]);
 
-// Tasks
-desc('Checkout repo');
+desc('Badrock: checkout repo');
 task('badrock:checkout', function () {
     runLocally('rm -rf "{{build_path}}"');
     runLocally('mkdir -p "{{build_path}}"');
     runLocally('git --work-tree="{{build_path}}" checkout -f {{target}}');
 })->once();
 
-desc('Backup database');
+desc('Badrock: backup database');
 task('badrock:db:backup', function () {
-    if (!get('wordpress_installed')) {
-        warning('Skip: WordPress is not installed.');
+    if (wordpressSkipIfNotInstalled()) {
         return;
     }
 
@@ -75,7 +74,7 @@ task('badrock:db:backup', function () {
     wp('db export {{database_backup}}');
 });
 
-desc('Deploy secrets');
+desc('Badrock: deploy secrets');
 task('badrock:secrets', function () {
     $secrets = parse('{{secrets_path}}/{{environment}}');
 
@@ -86,48 +85,39 @@ task('badrock:secrets', function () {
     upload($secrets, '{{release_or_current_path}}/.env.{{environment}}.local');
 });
 
-desc('Dump .env files to .env.local.php');
+desc('Badrock: dump .env files');
 task('badrock:dotenv:dump', function () {
     run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
 });
 
-desc('Create "public_html" symlink');
-task('badrock:public_html', function () {
-    run('cd {{deploy_path}} && {{bin/symlink}} {{current_path}}/public {{deploy_path}}/public_html');
+desc('Badrock: symlink public');
+task('badrock:symlink:public', function () {
+    if (!get('public_symlink')) {
+        return;
+    }
+
+    run('cd {{deploy_path}} && {{bin/symlink}} {{current_path}}/public {{deploy_path}}/{{public_symlink}}');
 });
 
-task('badrock:build', [
-    'badrock:checkout',
-]);
-
-task('badrock:deploy', [
-    'badrock:secrets',
-    'badrock:dotenv:dump',
-    'wordpress:core:download',
-    'wordpress:plugin:activate',
-    'badrock:db:backup',
-    'wordpress:db:migrate',
-    'wordpress:language:install',
-    'wordpress:rewrite:flush',
-    'wordpress:cache:flush',
-]);
-
-after('deploy:symlink', 'badrock:public_html');
-
-task('deploy:success', function () {
-    info("Successfully deployed!\n\n{{wordpress_siteurl}}");
-});
+after('deploy:symlink', 'badrock:symlink:public');
 
 task('deploy', [
     'deploy:info',
-    'badrock:build',
+    'badrock:checkout',
     'deploy:setup',
     'deploy:lock',
     'deploy:release',
     'rsync',
     'deploy:shared',
     'deploy:vendors',
-    'badrock:deploy',
+    'badrock:secrets',
+    'badrock:dotenv:dump',
+    'wordpress:core:download',
+    'badrock:db:backup',
+    'wordpress:db:migrate',
+    'wordpress:language:install',
+    'wordpress:rewrite:flush',
+    'wordpress:cache:flush',
     'deploy:writable',
     'crontab:sync',
     'deploy:publish',
