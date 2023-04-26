@@ -111,7 +111,7 @@ function wpFetchPluginsList()
 }
 
 /**
- * Refreshs WordPress plugins list.
+ * Refreshes WordPress plugins list.
  */
 function wpRefreshPluginsList()
 {
