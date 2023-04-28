@@ -17,7 +17,7 @@ function loadEnv(string $dotenvPath, string $env, string $defaultEnv): array
         $dotenv->loadEnv($dotenvPath, null, $defaultEnv, ['test']);
 
         $secrets = dirname($dotenvPath).'/config/secrets/'.$_ENV['WP_ENV'];
-        if (file_exists($secrets)) {
+        if (is_file($secrets)) {
             $dotenv->load($secrets);
         }
 
@@ -31,7 +31,9 @@ function loadEnv(string $dotenvPath, string $env, string $defaultEnv): array
 
 $defaultEnv = 'production';
 $dotenvPath = dirname(__DIR__).'/.env';
-$env = $argv[1] ?? $defaultEnv;
+
+$env = $argv[1] ?? null;
+$env = $env ?: (getenv('WP_ENV') ?: $defaultEnv);
 
 $vars = loadEnv($dotenvPath, $env, $defaultEnv);
 
