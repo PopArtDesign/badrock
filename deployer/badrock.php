@@ -46,6 +46,8 @@ add('rsync', [
     ],
 ]);
 
+set('dictator_file', '{{release_or_current_path}}/config/state.yaml');
+
 set('database_backup', '{{release_or_current_path}}/var/backup-' . date('c') . '.sql');
 
 set('public_symlink', 'public_html');
@@ -90,6 +92,19 @@ task('badrock:dotenv:dump', function () {
     run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
 });
 
+desc('Badrock: dictator');
+task('badrock:dictator:impose', function () {
+    if (wordpressSkipIfNotInstalled()) {
+        return;
+    }
+
+    if (!get('dictator_file') || !test('[ -f {{dictator_file}} ]')) {
+        return;
+    }
+
+    wp('dictator impose {{dictator_file}}');
+});
+
 desc('Badrock: symlink public');
 task('badrock:symlink:public', function () {
     if (!get('public_symlink')) {
@@ -116,6 +131,7 @@ task('deploy', [
     'badrock:db:backup',
     'wordpress:db:migrate',
     'wordpress:language:install',
+    'badrock:dictator:impose',
     'wordpress:rewrite:flush',
     'wordpress:cache:flush',
     'deploy:writable',

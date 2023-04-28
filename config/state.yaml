@@ -1,0 +1,11 @@
+# https://github.com/boxuk/dictator
+state: site
+
+settings:
+    title: 'App'
+    description: 'App'
+    timezone: 'Europe/Moscow'
+    date_format: d.m.Y
+    time_format: H:i
+    public: true
+    permalink_structure: '/%category%/%postname%/'
