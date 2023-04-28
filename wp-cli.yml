@@ -18,3 +18,11 @@ language plugin install: *languages
     all: true
 language theme install: *languages
     all: true
+
+DICTATOR: &state
+    - 'config/state.yaml'
+
+dictator impose: *state
+dictator compare: *state
+dictator diff: *state
+dictator validate: *state
