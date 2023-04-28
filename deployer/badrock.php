@@ -26,8 +26,6 @@ add('writable_dirs', [
 
 set('build_path', dirname(__DIR__) . '/var/build');
 
-set('secrets_path', '{{build_path}}/config/secrets');
-
 set('tools_path', '{{release_or_current_path}}/tools');
 
 set('rsync_src', '{{build_path}}');
@@ -39,10 +37,13 @@ add('rsync', [
         '.gitattributes',
         '.gitignore',
         'Makefile',
-        'config/secrets',
+        'config/secrets/*',
         'deploy.php',
         'deployer',
         'tests',
+    ],
+    'include' => [
+        'config/secrets/'.get('environment'),
     ],
 ]);
 
@@ -74,17 +75,6 @@ task('badrock:db:backup', function () {
     }
 
     wp('db export {{database_backup}}');
-});
-
-desc('Badrock: deploy secrets');
-task('badrock:secrets', function () {
-    $secrets = parse('{{secrets_path}}/{{environment}}');
-
-    if (!file_exists($secrets)) {
-        return;
-    }
-
-    upload($secrets, '{{release_or_current_path}}/.env.{{environment}}.local');
 });
 
 desc('Badrock: dump .env files');
@@ -125,7 +115,6 @@ task('deploy', [
     'rsync',
     'deploy:shared',
     'deploy:vendors',
-    'badrock:secrets',
     'badrock:dotenv:dump',
     'wordpress:core:download',
     'badrock:db:backup',

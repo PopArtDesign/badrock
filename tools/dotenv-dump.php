@@ -15,6 +15,12 @@ function loadEnv(string $dotenvPath, string $env, string $defaultEnv): array
 
     try {
         $dotenv->loadEnv($dotenvPath, null, $defaultEnv, ['test']);
+
+        $secrets = dirname($dotenvPath).'/config/secrets/'.$_ENV['WP_ENV'];
+        if (file_exists($secrets)) {
+            $dotenv->load($secrets);
+        }
+
         unset($_ENV['SYMFONY_DOTENV_VARS']);
 
         return $_ENV;
