@@ -46,6 +46,13 @@ if (file_exists($root_dir . '/.env.local.php') || file_exists($root_dir . '/.env
     $dotenv->usePutenv();
 
     $dotenv->bootEnv($root_dir . '/.env', 'production');
+
+    if (!file_exists($root_dir . '/.env.local.php')) {
+        $secrets = $root_dir . '/config/secrets/' . env('WP_ENV');
+        if (is_file($secrets)) {
+            $dotenv->load($secrets);
+        }
+    }
 }
 
 /**
