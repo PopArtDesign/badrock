@@ -45,7 +45,7 @@ add('rsync', [
     ],
 ]);
 
-set('dictator_file', '{{release_or_current_path}}/config/state.yaml');
+set('dictator_file', '{{release_or_current_path}}/config/site-state.yaml');
 
 set('database_backup', '{{release_or_current_path}}/var/backup-' . date('c') . '.sql');
 
