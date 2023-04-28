@@ -10,8 +10,6 @@ require_once __DIR__.'/wordpress.php';
 
 add('recipes', ['badrock']);
 
-set('environment', 'production');
-
 add('shared_dirs', [
     'public/wp-content/uploads',
     'var/log',
@@ -43,7 +41,7 @@ add('rsync', [
         'tests',
     ],
     'include' => [
-        'config/secrets/'.get('environment'),
+        'config/secrets/{{environment}}',
     ],
 ]);
 
@@ -56,6 +54,15 @@ set('public_symlink', 'public_html');
 add('crontab:jobs', [
     '{{wordpress_cron_job}}',
 ]);
+
+desc('Badrock: detect environment');
+task('badrock:environment:detect', function () {
+    if (!get('environment')) {
+        set('environment', remoteEnv()['WP_ENV'] ?? 'production');
+    }
+
+    info('WP_ENV={{environment}}');
+});
 
 desc('Badrock: checkout repo');
 task('badrock:checkout', function () {
@@ -108,6 +115,7 @@ after('deploy:symlink', 'badrock:symlink:public');
 
 task('deploy', [
     'deploy:info',
+    'badrock:environment:detect',
     'badrock:checkout',
     'deploy:setup',
     'deploy:lock',
