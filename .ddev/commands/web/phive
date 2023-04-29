@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Description: Run Phive
+## Usage: phive [global-options] <command> [arguments]
+## Example: ddev phive install --copy
+
+phive "$@"
