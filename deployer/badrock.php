@@ -51,6 +51,8 @@ set('database_backup', '{{release_or_current_path}}/var/backup-' . date('c') . '
 
 set('public_symlink', 'public_html');
 
+set('htpasswd_admin', '{{release_or_current_path}}/config/htpasswd-{{environment}}');
+
 add('crontab:jobs', [
     '{{wordpress_cron_job}}',
 ]);
@@ -111,6 +113,21 @@ task('badrock:symlink:public', function () {
     run('cd {{deploy_path}} && {{bin/symlink}} {{current_path}}/public {{deploy_path}}/{{public_symlink}}');
 });
 
+desc('Badrock: protect /wp-admin');
+task('badrock:htpasswd:admin', function () {
+    if (!get('htpasswd_admin')) {
+        return;
+    }
+
+    if (!test('[ -f "{{htpasswd_admin}}" ]')) {
+        warning('Skip: .htpasswd file not found.');
+        return;
+    }
+
+    run('{{bin/php}} {{tools_path}}/htpasswd-admin.php "{{htpasswd_admin}}"');
+});
+
+
 after('deploy:symlink', 'badrock:symlink:public');
 
 task('deploy', [
@@ -133,5 +150,6 @@ task('deploy', [
     'wordpress:cache:flush',
     'deploy:writable',
     'crontab:sync',
+    'badrock:htpasswd:admin',
     'deploy:publish',
 ]);

@@ -36,3 +36,4 @@
 /tools/*
 !/tools/dotenv-dump.php
 !/tools/generate.php
+!/tools/htpasswd-admin.php
