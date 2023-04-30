@@ -57,6 +57,14 @@ add('crontab:jobs', [
     '{{wordpress_cron_job}}',
 ]);
 
+set('siteurl', function () {
+    $envs = json_decode(run(
+        '{{bin/php}} {{tools_path}}/dotenv-dump.php --show --json {{environment}}',
+    ), true);
+
+    return $envs['WP_SITEURL'] ?? $envs['WP_HOME'] ?? null;
+});
+
 desc('Badrock: detect environment');
 task('badrock:environment:detect', function () {
     if (!get('environment')) {
@@ -127,6 +135,14 @@ task('badrock:htpasswd:admin', function () {
     run('{{bin/php}} {{tools_path}}/htpasswd-admin.php "{{htpasswd_admin}}"');
 });
 
+task('deploy:success', function () {
+    info('Successfully deployed!');
+
+    if (get('siteurl')) {
+        writeln('');
+        writeln('{{siteurl}}');
+    }
+});
 
 after('deploy:symlink', 'badrock:symlink:public');
 
