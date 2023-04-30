@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 which 'ddev' >/dev/null || {
     echo 'DDEV is not installed: https://ddev.com/get-started/'
     exit 1
@@ -8,91 +10,130 @@ which 'ddev' >/dev/null || {
 declare -r app_name="${0##*/}"
 
 main() {
-    if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+    declare -r action="${1:-}" && [[ $# -gt 0 ]] && shift;
+
+    if [[ -z "${action}" ]]; then
+        echo 'Command required. Try --help' >&2
+        exit 1
+    fi
+
+    if [[ "${action}" == '-h' || "${action}" == '--help' ]]; then
         badrock_help
         exit
     fi
 
-    if [[ -f "${PWD}/.ddev/config.yaml" ]]; then
-        if [[ "${1:1:1}" == '-' ]]; then
-            ddev config "$@" && ddev restart
-            exit
-        else
-            exec ddev launch "$@" 2>/dev/null
-        fi
-    fi
+    case "${action}" in
+        init )
+            badrock_init "$@"
+            return
+            ;;
+        install )
+            badrock_install "$@"
+            return
+            ;;
+        update )
+            badrock_update "$@"
+            return
+            ;;
+    esac
 
-    badrock_init "$@"
+    echo "Unknown command ${action}. Try --help" >&2
+    exit 1
 }
 
 badrock_help() {
     cat <<HELP
 Badrock DDEV wrapper: https://github.com/PopArtDesign/badrock
 
-Usage: ${app_name} [flags]
+Usage:
 
-Example:
+  ${app_name} <command> [options]
 
-    ${app_name} --php-version=8.1
+Arguments:
 
-Flags:
+  <command>  Command: "init", "install", "update"
 
+Examples:
+
+  # Initialize new Badrock project in current dir
+  ${app_name} init --php-version=8.1
+
+  # Install WordPress, project dependencies and translations
+  ${app_name} install
+
+  # Update WordPress with translations
+  ${app_name} update
 HELP
-
-ddev config --help | sed \
-    -e '1,/Flags/d' \
-    -e '/Global Flags/,$d' \
-    -e 's/^[[:space:]]\+/    /'
 }
 
 badrock_init() {
-    badrock_ddev_config "$@" \
-        && ddev composer create -y 'popartdesign/badrock:@dev' \
-        && badrock_wordpress_install \
-        && badrock_install_extra_packages \
-        && badrock_wordpress_config \
-        && ddev launch 2>/dev/null
-}
-
-badrock_ddev_config() {
     ddev config "$@" \
         --project-type='wordpress' \
         --disable-settings-management \
         --docroot='public' \
         --create-docroot \
-        --upload-dir='wp-content/uploads'
+        --upload-dir='wp-content/uploads' \
+        "$@" && \
+        ddev composer create -y --no-install "${BADROCK_PACKAGE:-popartdesign/badrock:@dev}"
 }
 
-badrock_wordpress_install() {
-    ddev exec vendor/bin/wp core download && \
-        ddev exec vendor/bin/wp core install \
+badrock_install() {
+    ddev composer install && \
+        badrock_wordpress_core_install && \
+        badrock_install_extra_packages && \
+        badrock_wordpress_language_install && \
+        badrock_wordpress_config && \
+        ddev launch 2>/dev/null
+}
+
+badrock_update() {
+    badrock_wp core update &&
+        badrock_wordpress_language_update
+}
+
+badrock_wordpress_core_install() {
+    badrock_wp core download --force && \
+        badrock_wp core install \
             --url='"${DDEV_PRIMARY_URL}"' \
             --title='"${DDEV_PROJECT}"' \
             --admin_user="${BADROCK_ADMIN_USER:-admin}" \
             --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
-            --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}"
+            --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}" \
+            "$@"
+}
+
+badrock_wordpress_language_install() {
+    if [[ -n "${BADROCK_LANGUAGE:-}" ]]; then
+        badrock_wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
+    fi
+
+    badrock_wp language core install && \
+        badrock_wp language plugin install --all && \
+        badrock_wp language theme install --all
+}
+
+badrock_wordpress_language_update() {
+    badrock_wp language core update && \
+        badrock_wp language plugin update --all && \
+        badrock_wp language theme update --all
 }
 
 badrock_wordpress_config() {
-    ddev exec vendor/bin/wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
-
-    if [[ -n "${BADROCK_LANGUAGE}" ]]; then
-        ddev exec vendor/bin/wp language core install --activate "${BADROCK_LANGUAGE}" || return 1
-    fi
-
-    ddev exec vendor/bin/wp language core install && \
-        ddev exec vendor/bin/wp language plugin install && \
-        ddev exec vendor/bin/wp language theme install || return 1
+    badrock_wp rewrite structure "${BADROCK_PERMALINK_STRUCTURE:-/%category%/%postname%/}" || return 1
 }
 
 badrock_install_extra_packages() {
-    if [[ -n "${BADROCK_EXTRA_PACKAGES}" ]]; then
+    if [[ -n "${BADROCK_EXTRA_PACKAGES:-}" ]]; then
         ddev composer require ${BADROCK_EXTRA_PACKAGES} || return 1
     fi
 
-    if [[ -n "${BADROCK_EXTRA_DEV_PACKAGES}" ]]; then
+    if [[ -n "${BADROCK_EXTRA_DEV_PACKAGES:-}" ]]; then
         ddev composer require --dev ${BADROCK_EXTRA_DEV_PACKAGES} || return 1
     fi
+}
+
+badrock_wp() {
+    ddev exec vendor/bin/wp "$@"
 }
 
 main "$@"
