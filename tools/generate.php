@@ -2,7 +2,46 @@
 
 declare(strict_types=1);
 
-function generateRandomString(int $length, $options = []): string
+$app = $argv[0];
+$root = dirname(__DIR__);
+
+$restIndex = null;
+$options = getopt('h', ['help', 'no-uppercase', 'no-numbers', 'no-specials'], $restIndex);
+$args = array_slice($argv, $restIndex);
+
+if (isset($options['h']) || isset($options['help'])) {
+    echo <<<HELP
+Generates random strings: passwords, salts and etc.
+
+Usage:
+
+  php {$app} [options] <action> [<length>]
+
+Options:
+
+  -h, --help          Show this help message
+      --no-specials   Don't use special symbols
+      --no-uppercase  Don't use uppercase symbols
+      --no-numbers    Don't use numbers
+
+Arguments:
+
+  <action>  Action (e.g. 'salt', 'db-prefix', 'password')
+  <length>  Length
+
+Examples:
+
+  php {$app} salt
+
+  php {$app} db-prefix
+
+  php {$app} --no-specials password 20
+
+HELP;
+    exit();
+}
+
+function generateRandomString(int $length, array $options = []): string
 {
     $chars = 'abcdefghijklmnopqrstuvwxyz';
     if ($options['uppercase'] ?? true) {
@@ -26,7 +65,7 @@ function generateRandomString(int $length, $options = []): string
     return $result;
 }
 
-function generateSalt(int $length): void
+function generateSalt(int $length, array $options): void
 {
     $keys = [
         'AUTH_KEY',
@@ -40,62 +79,45 @@ function generateSalt(int $length): void
     ];
 
     foreach ($keys as $key) {
-        printf("%s='%s'\n", $key, generateRandomString($length));
+        printf("%s='%s'\n", $key, generateRandomString($length, $options));
     }
 }
 
-function generateDbPrefix(int $length)
+function generateDbPrefix(int $length, array $options = [])
 {
     printf("DB_PREFIX='wp_%s_'\n", generateRandomString($length, [
         'uppercase' => false,
         'specials' => false,
-    ]));
+    ] + $options));
 }
 
-function generatePassword(int $length)
+function generatePassword(int $length, array $options)
 {
-    printf("%s\n", generateRandomString($length));
+    printf("%s\n", generateRandomString($length, $options));
 }
 
-function help()
-{
-    global $argv;
-
-    echo <<<HELP
-Generates random strings: passwords, salts and etc.
-
-Usage:
-
-  php {$argv[0]} <action> [<length>]
-
-Allowed actions: "salt", "db-prefix", "password"
-
-Examples:
-
-  php {$argv[0]} salt
-
-  php {$argv[0]} password 18
-
-HELP;
+if (!($action = $args[0] ?? null)) {
+    fwrite(STDERR, 'Action required. Try --help' . PHP_EOL);
+    exit(1);
 }
 
-$action = $argv[1] ?? 'help';
-$length = isset($argv[2]) ? (int) $argv[2] : null;
+$length = isset($args[1]) ? (int) $args[1] : null;
+
+$actionOptions = [
+    'numbers' => !isset($options['no-numbers']),
+    'specials' => !isset($options['no-specials']),
+    'uppercase' => !isset($options['no-uppercase']),
+];
 
 switch ($action) {
-    case '-h':
-    case '--help':
-    case 'help':
-        help();
-        break;
     case 'salt':
-        generateSalt($length ?? 64);
+        generateSalt($length ?? 64, $actionOptions);
         break;
     case 'db-prefix':
-        generateDbPrefix($length ?? 5);
+        generateDbPrefix($length ?? 5, $actionOptions);
         break;
     case 'password':
-        generatePassword($length ?? 16);
+        generatePassword($length ?? 16, $actionOptions);
         break;
     default:
         fwrite(STDERR, sprintf(
