@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+$app = $argv[0];
+$root = dirname(__DIR__);
+
 $restIndex = null;
 $options = getopt('h', ['help'], $restIndex);
 $args = array_slice($argv, $restIndex);
@@ -12,7 +15,7 @@ Protects /wp-admin with basic password authentication by adding rules to .htacce
 
 Usage:
 
-  php {$argv[0]} [options] <file>
+  php {$app} [options] <file>
 
 Options:
 
@@ -24,13 +27,11 @@ Arguments:
 
 Examples:
 
-  php {$argv[0]} config/htpasswd
+  php {$app} config/htpasswd
 
 HELP;
     exit();
 }
-
-$root = dirname(__DIR__);
 
 if (!($args[0] ?? null)) {
     fwrite(STDERR, 'Path to htpasswd file required. Try --help' . PHP_EOL);
