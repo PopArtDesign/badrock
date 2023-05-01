@@ -58,11 +58,12 @@ add('crontab:jobs', [
 ]);
 
 set('siteurl', function () {
-    $envs = json_decode(run(
-        '{{bin/php}} {{tools_path}}/dotenv-dump.php --show --json {{environment}}',
-    ), true);
+    $config = wpGetConstants();
 
-    return $envs['WP_SITEURL'] ?? $envs['WP_HOME'] ?? null;
+    $siteUrl = $config['WP_SITEURL'] ?? null;
+    $homeUrl = $config['WP_HOME'] ?? null;
+
+    return $siteUrl ?: $homeUrl;
 });
 
 desc('Badrock: detect environment');

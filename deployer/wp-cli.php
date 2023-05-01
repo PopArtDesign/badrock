@@ -79,18 +79,59 @@ function wpIsCoreInstalled($refresh = false)
 }
 
 /**
- * Returns all defined constants.
+ * Fetches WordPress config.
  *
  * @return array
  */
-function wpFetchConstants()
+function wpFetchConfig()
 {
-    $eval = '$c = get_defined_constants(true); echo json_encode($c["user"] ?? []);';
+    return \json_decode(wp('config list --json'), \JSON_OBJECT_AS_ARRAY);
+}
 
-    return \json_decode(
-        wp(\sprintf("eval '%s'", $eval)),
-        \JSON_OBJECT_AS_ARRAY,
-    );
+/**
+ * Refreshes WordPress config.
+ */
+function wpRefreshConfig()
+{
+    set('wp_config', wpFetchConfig());
+}
+
+/**
+ * Returns WordPress config.
+ *
+ * @param bool $refresh (optional) Refresh
+ *
+ * @return array
+ */
+function wpGetConfig($refresh = false)
+{
+    if ($refresh || !has('wp_config')) {
+        wpRefreshConfig();
+    }
+
+    return get('wp_config');
+}
+
+/**
+ * Returns WordPress config constants.
+ *
+ * @param bool $refresh (optional) Refresh
+ *
+ * @return array
+ */
+function wpGetConstants($refresh = false)
+{
+    $constants = [];
+
+    $config = wpGetConfig($refresh);
+
+    foreach ($config as $value) {
+        if ('constant' === $value['type']) {
+            $constants[$value['name']] = $value['value'];
+        }
+    }
+
+    return $constants;
 }
 
 /**
