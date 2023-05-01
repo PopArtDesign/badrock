@@ -10,32 +10,29 @@ $app = $argv[0];
 $root = dirname(__DIR__);
 
 $restIndex = null;
-$options = getopt('hs', ['help', 'show', 'json'], $restIndex);
+$options = getopt('h', ['help'], $restIndex);
 $args = array_slice($argv, $restIndex);
 
 if (isset($options['h']) || isset($options['help'])) {
     echo <<<HELP
-Dumps all .env.* files into .env.local.php one.
+Dumps all .env.* files into one PHP file.
 
 Usage:
 
-  php {$app} [options] <env>
+  php {$app} [options] <env> [<file>]
 
 Options:
 
   -h, --help  Show this help message
-  -s, --show  Show environment vars instead of dumping
-      --json  Show in JSON format
 
 Arguments:
 
-  <env>  Environment (WP_ENV e.g. 'production', 'staging')
+  <env>   Environment (WP_ENV e.g. 'production', 'staging')
+  <file>  PHP file (e.g. '.env.local.php')
 
 Examples:
 
-  php {$app} production
-
-  php {$app} --show production
+  php {$app} production ./.env.local.php
 
 HELP;
     exit();
@@ -71,6 +68,8 @@ if (!($env = $args[0] ?? null)) {
     exit(1);
 }
 
+$file = $args[1] ?? null;
+
 $defaultEnv = $env;
 $dotenvPath = $root . '/.env';
 
@@ -78,13 +77,7 @@ $vars = loadEnv($dotenvPath, $env, $defaultEnv);
 
 $env = $vars['WP_ENV'];
 
-if (isset($options['s']) || isset($options['show'])) {
-    if (isset($options['json'])) {
-        echo json_encode($vars, JSON_PRETTY_PRINT);
-
-        return 0;
-    }
-
+if (!$file) {
     foreach ($vars as $key => $value) {
         printf("%s='%s'".PHP_EOL, $key, $value);
     }
@@ -100,8 +93,6 @@ $vars = <<<EOF
 
 return {$vars};
 EOF;
-
-$file = $dotenvPath.'.local.php';
 
 if (false === file_put_contents($file, $vars, \LOCK_EX)) {
     fwrite(STDERR, 'Failed to wirte file: ' . $file . PHP_EOL);

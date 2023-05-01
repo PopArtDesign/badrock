@@ -97,7 +97,7 @@ task('badrock:db:backup', function () {
 
 desc('Badrock: dump .env files');
 task('badrock:dotenv:dump', function () {
-    run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}}');
+    run('{{bin/php}} {{tools_path}}/dotenv-dump.php {{environment}} {{release_or_current_path}}/.env.local.php');
 });
 
 desc('Badrock: dictator');
