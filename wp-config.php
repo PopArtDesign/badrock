@@ -127,7 +127,7 @@ if (env('DATABASE_URL')) {
  * Generate your keys here: https://roots.io/salts.html
  * or run:
  *
- * php tools/generate.php salt
+ * php tools/random.php salt
  */
 Config::define('AUTH_KEY', env('AUTH_KEY'));
 Config::define('SECURE_AUTH_KEY', env('SECURE_AUTH_KEY'));
