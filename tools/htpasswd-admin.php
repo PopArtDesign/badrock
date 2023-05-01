@@ -17,13 +17,13 @@ Usage:
 
   php {$app} [options] <file>
 
+Arguments:
+
+  file  Path to htpasswd file
+
 Options:
 
   -h, --help  Show this help message
-
-Arguments:
-
-  <file>  Path to htpasswd file
 
 Examples:
 

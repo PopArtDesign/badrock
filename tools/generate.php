@@ -17,17 +17,17 @@ Usage:
 
   php {$app} [options] <action> [<length>]
 
+Arguments:
+
+  action  Action (e.g. 'salt', 'db-prefix', 'password')
+  length  Length
+
 Options:
 
   -h, --help          Show this help message
       --no-specials   Don't use special symbols
       --no-uppercase  Don't use uppercase symbols
       --no-numbers    Don't use numbers
-
-Arguments:
-
-  <action>  Action (e.g. 'salt', 'db-prefix', 'password')
-  <length>  Length
 
 Examples:
 

@@ -21,14 +21,14 @@ Usage:
 
   php {$app} [options] <env> [<file>]
 
+Arguments:
+
+  env   Environment (WP_ENV e.g. 'production', 'staging')
+  file  PHP file (e.g. '.env.local.php')
+
 Options:
 
   -h, --help  Show this help message
-
-Arguments:
-
-  <env>   Environment (WP_ENV e.g. 'production', 'staging')
-  <file>  PHP file (e.g. '.env.local.php')
 
 Examples:
 
