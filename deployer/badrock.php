@@ -57,15 +57,6 @@ add('crontab:jobs', [
     '{{wordpress_cron_job}}',
 ]);
 
-set('siteurl', function () {
-    $config = wpGetConfig();
-
-    $siteUrl = $config['WP_SITEURL'] ?? null;
-    $homeUrl = $config['WP_HOME'] ?? null;
-
-    return $siteUrl ?: $homeUrl;
-});
-
 desc('Badrock: detect environment');
 task('badrock:environment:detect', function () {
     if (!get('environment')) {
@@ -139,9 +130,9 @@ task('badrock:htpasswd:admin', function () {
 task('deploy:success', function () {
     info('Successfully deployed!');
 
-    if (get('siteurl')) {
+    if (get('wordpress_siteurl')) {
         writeln('');
-        writeln('{{siteurl}}');
+        writeln('{{wordpress_siteurl}}');
     }
 });
 

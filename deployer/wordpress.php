@@ -4,6 +4,15 @@ namespace Deployer;
 
 require_once __DIR__.'/wp-cli.php';
 
+set('wordpress_siteurl', function () {
+    $config = wpGetConfig();
+
+    $siteUrl = $config['WP_SITEURL'] ?? null;
+    $homeUrl = $config['WP_HOME'] ?? null;
+
+    return $siteUrl ?: $homeUrl;
+});
+
 set('bin/wordpress_cron', function () {
     return str_replace(
         get('release_or_current_path'),
