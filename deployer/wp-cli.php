@@ -34,6 +34,18 @@ set('bin/wp', function () {
     return '{{bin/php}} {{deploy_path}}/.dep/wp-cli.phar';
 });
 
+set('wp_core_installed', function () {
+    return wpTest('core is-installed');
+});
+
+set('wp_config', function () {
+    return wpFetchConfig();
+});
+
+set('wp_plugins', function () {
+    return wpFetchPlugins();
+});
+
 /**
  * Runs wp-cli subcommand.
  *
@@ -72,10 +84,20 @@ function wpTest($command)
 function wpIsCoreInstalled($refresh = false)
 {
     if ($refresh || !has('wp_core_installed')) {
-        set('wp_core_installed', wpTest('core is-installed'));
+        wpRefreshCoreInstalled();
     }
 
     return get('wp_core_installed');
+}
+
+/**
+ * Refreshes whether WordPress core installed.
+ */
+function wpRefreshCoreInstalled()
+{
+    set('wp_core_installed', function () {
+        return wpTest('core is-installed');
+    });
 }
 
 /**
@@ -85,7 +107,16 @@ function wpIsCoreInstalled($refresh = false)
  */
 function wpFetchConfig()
 {
-    return \json_decode(wp('config list --json'), \JSON_OBJECT_AS_ARRAY);
+    $config = [];
+    $data = \json_decode(wp('config list --json'), \JSON_OBJECT_AS_ARRAY);
+
+    foreach ($data as $value) {
+        if ('constant' === $value['type']) {
+            $config[$value['name']] = $value['value'];
+        }
+    }
+
+    return $config;
 }
 
 /**
@@ -93,7 +124,9 @@ function wpFetchConfig()
  */
 function wpRefreshConfig()
 {
-    set('wp_config', wpFetchConfig());
+    set('wp_config', function () {
+        return wpFetchConfig();
+    });
 }
 
 /**
@@ -112,34 +145,13 @@ function wpGetConfig($refresh = false)
     return get('wp_config');
 }
 
+
 /**
- * Returns WordPress config constants.
- *
- * @param bool $refresh (optional) Refresh
+ * Fetches WordPress plugins list.
  *
  * @return array
  */
-function wpGetConstants($refresh = false)
-{
-    $constants = [];
-
-    $config = wpGetConfig($refresh);
-
-    foreach ($config as $value) {
-        if ('constant' === $value['type']) {
-            $constants[$value['name']] = $value['value'];
-        }
-    }
-
-    return $constants;
-}
-
-/**
- * Returns WordPress plugins list.
- *
- * @return array
- */
-function wpFetchPluginsList()
+function wpFetchPlugins()
 {
     $list = \json_decode(wp('plugin list --json'), \JSON_OBJECT_AS_ARRAY);
 
@@ -154,9 +166,11 @@ function wpFetchPluginsList()
 /**
  * Refreshes WordPress plugins list.
  */
-function wpRefreshPluginsList()
+function wpRefreshPlugins()
 {
-    set('wp_plugins_list', wpFetchPluginsList());
+    set('wp_plugins', function () {
+        return wpFetchPlugins();
+    });
 }
 
 /**
@@ -166,13 +180,13 @@ function wpRefreshPluginsList()
  *
  * @return array
  */
-function wpGetPluginsList($refresh = false)
+function wpGetPlugins($refresh = false)
 {
-    if ($refresh || !has('wp_plugins_list')) {
-        wpRefreshPluginsList();
+    if ($refresh || !has('wp_plugins')) {
+        wpRefreshPlugins();
     }
 
-    return get('wp_plugins_list');
+    return get('wp_plugins');
 }
 
 /**
@@ -185,7 +199,7 @@ function wpGetPluginsList($refresh = false)
  */
 function wpGetPluginStatus($plugin, $refresh = false)
 {
-    $plugins = wpGetPluginsList($refresh);
+    $plugins = wpGetPlugins($refresh);
 
     return $plugins[$plugin]['status'] ?? 'not-installed';
 }

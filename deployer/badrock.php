@@ -58,7 +58,7 @@ add('crontab:jobs', [
 ]);
 
 set('siteurl', function () {
-    $config = wpGetConstants();
+    $config = wpGetConfig();
 
     $siteUrl = $config['WP_SITEURL'] ?? null;
     $homeUrl = $config['WP_HOME'] ?? null;
