@@ -88,6 +88,7 @@ badrock_install() {
 
 badrock_update() {
     badrock_wp core update &&
+        badrock_wordpress_database_migrate &&
         badrock_wordpress_language_update
 }
 
@@ -100,6 +101,12 @@ badrock_wordpress_core_install() {
             --admin_password="${BADROCK_ADMIN_PASSWORD:-admin}" \
             --admin_email="${BADROCK_ADMIN_EMAIL:-admin@\${DDEV_HOSTNAME}}" \
             "$@"
+}
+
+badrock_wordpress_database_migrate() {
+    badrock_wp core update-db && \
+        badrock_wp plugin is-active 'woocommerce' || return && \
+        badrock_wp wc update
 }
 
 badrock_wordpress_language_install() {
