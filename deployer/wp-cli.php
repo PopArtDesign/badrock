@@ -145,7 +145,6 @@ function wpGetConfig($refresh = false)
     return get('wp_config');
 }
 
-
 /**
  * Fetches WordPress plugins list.
  *
