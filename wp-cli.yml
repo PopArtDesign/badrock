@@ -1,5 +1,5 @@
 VERSION: &version
-    version: 6.5
+    version: 6.5.2
     skip-content: true
 
 LANGUAGES: &languages
