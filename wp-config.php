@@ -68,7 +68,7 @@ define('WP_ENV', env('WP_ENV') ?: 'production');
 if (env('WP_ENVIRONMENT_TYPE')) {
     define('WP_ENVIRONMENT_TYPE', env('WP_ENVIRONMENT_TYPE'));
 } else {
-    if (in_array(WP_ENV, ['production', 'staging', 'development'])) {
+    if (in_array(WP_ENV, ['production', 'staging', 'development', 'local'])) {
         define('WP_ENVIRONMENT_TYPE', WP_ENV);
     } else {
         define('WP_ENVIRONMENT_TYPE', 'production');
