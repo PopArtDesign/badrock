@@ -2,7 +2,7 @@
 
 namespace Deployer;
 
-require __DIR__.'/deployer/recipe.php';
+require __DIR__.'/deployer/badrock.php';
 
 host('production')
     ->set('hostname', 'production')
